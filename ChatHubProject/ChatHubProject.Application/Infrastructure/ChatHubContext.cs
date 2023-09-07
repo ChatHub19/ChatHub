@@ -1,21 +1,15 @@
-﻿using Bogus;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
 using ChatHubProject.Application.Model;
+using Bogus;
+using System.Linq;
 
 namespace ChatHubProject.Application.Infrastructure
 {
     public class TaskTrackerContext : DbContext
     {
-        //public DbSet<User> Users => Set<User>();
-        //public DbSet<UserList> Lists => Set<UserList>();
-        //public DbSet<ListTask> Tasks => Set<ListTask>();
+        public DbSet<User> Users => Set<User>();
 
         public TaskTrackerContext(DbContextOptions<TaskTrackerContext> opt) : base(opt) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,30 +46,21 @@ namespace ChatHubProject.Application.Infrastructure
         /// </summary>
         private async Task Initialize()
         {
-            //var users = new[]
-            //{
-            //    new User(
-            //        username: "Ruffy",
-            //        password: "King",
-            //        email: "ruffy@spengergasse.at",
-            //        role: Userrole.Admin),
-            //    new User(
-            //        username: "Zoro",
-            //        password: "Sword",
-            //        email: "zoro@spengergasse.at",
-            //        role: Userrole.User),
-            //};
-            //await Users.AddRangeAsync(users);
-            //await SaveChangesAsync();
-
-            //foreach (var user in users)
-            //{
-            //    var userlist1 = new UserList(name: "GetStarted", user: user);
-            //    await Lists.AddAsync(userlist1);
-            //    var userlist2 = new UserList(name: "Favorite", user: user);
-            //    await Lists.AddAsync(userlist2);
-            //}
-            //await SaveChangesAsync();
+            var users = new[]
+            {
+                new User(
+                    username: "admin",
+                    password: "1234",
+                    email: "admin@gmail.com",
+                    role: Userrole.Admin),
+                new User(
+                    username: "user",
+                    password: "1234",
+                    email: "user@gmail.com",
+                    role: Userrole.User),
+            };
+            await Users.AddRangeAsync(users);
+            await SaveChangesAsync();
         }
 
         /// <summary>
@@ -84,54 +69,26 @@ namespace ChatHubProject.Application.Infrastructure
         /// </summary>    
         private async Task Seed()
         {
-            //Randomizer.Seed = new Random(1039);
-            //var faker = new Faker("en");
+            Randomizer.Seed = new Random(1039);
+            var faker = new Faker("en");
 
-            //var users = new Faker<User>("en").CustomInstantiator(f =>
-            //{
-            //    var username = f.Name.FirstName();
-            //    return new User(
-            //        username: username.ToLower(),
-            //        password: "111",
-            //        email: $"{username.ToLower()}@spengergasse.at",
-            //        role: f.PickRandom<Userrole>())
-            //    { Guid = f.Random.Guid() };
-            //})
-            //.Generate(10)
-            //.GroupBy(a => a.Email).Select(g => g.First())
-            //.ToList();
-            //await Users.AddRangeAsync(users);
-            //await SaveChangesAsync();
+            var users = new Faker<User>("en").CustomInstantiator(f =>
+            {
+                var username = f.Name.FirstName();
+                return new User(
+                    username: username.ToLower(),
+                    password: "1234",
+                    email: $"{username.ToLower()}@gmail.com",
+                    role: f.PickRandom<Userrole>())
+                { Guid = f.Random.Guid() };
+            })
+            .Generate(10)
+            .GroupBy(a => a.Email).Select(g => g.First())
+            .ToList();
+            await Users.AddRangeAsync(users);
+            await SaveChangesAsync();
 
-            //var lists = new Faker<UserList>("en").CustomInstantiator(f =>
-            //{
-            //    return new UserList(
-            //        name: "GetStarted",
-            //        user: users[0])
-            //    { Guid = f.Random.Guid() };
-            //})
-            //.Generate(10)
-            //.GroupBy(a => a.UserId).Select(g => g.First())
-            //.ToList();
-            //await Lists.AddRangeAsync(lists);
-            //await SaveChangesAsync();
-
-            //var tasks = new Faker<ListTask>("en").CustomInstantiator(f =>
-            //{
-            //    return new ListTask(
-            //        name: "Test 1",
-            //        status: Status.NotFinished,
-            //        priority: Priority.Low,
-            //        isfavorite: false,
-            //        list: lists[0],
-            //        date: null)
-            //    { Guid = f.Random.Guid() };
-            //})
-            //.Generate(10)
-            //.GroupBy(a => a.ListId).Select(g => g.First())
-            //.ToList();
-            //await Tasks.AddRangeAsync(tasks);
-            //await SaveChangesAsync();
+         
         }
 
         /// <summary>
