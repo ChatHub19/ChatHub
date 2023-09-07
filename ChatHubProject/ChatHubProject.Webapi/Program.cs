@@ -1,3 +1,4 @@
+using ChatHubProject.Application.Dto;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,8 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using TaskTrackerProject.Application.Dto;
-using TaskTrackerProject.Application.Infrastructure;
+using ChatHubProject.Application.Dto;
+using ChatHubProject.Application.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 // JWT Authentication ******************************************************************************
@@ -30,7 +31,7 @@ builder.Services
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddDbContext<TaskTrackerContext>(opt =>
+builder.Services.AddDbContext<ChatHubContext>(opt =>
 {
     opt.UseSqlServer(
         builder.Configuration.GetConnectionString("Default"),
@@ -56,7 +57,7 @@ if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
     {
-        using (var db = scope.ServiceProvider.GetRequiredService<ChatBombContext>())
+        using (var db = scope.ServiceProvider.GetRequiredService<ChatHubContext>())
         {
             await db.CreateDatabase(isDevelopment: app.Environment.IsDevelopment());
         }
