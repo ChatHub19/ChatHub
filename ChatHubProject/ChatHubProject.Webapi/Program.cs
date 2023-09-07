@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);

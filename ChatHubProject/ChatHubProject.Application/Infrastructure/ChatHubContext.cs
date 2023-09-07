@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace ChatHubProject.Application.Infrastructure
 {
-    public class TaskTrackerContext : DbContext
+    public class ChatHubContext : DbContext
     {
         public DbSet<User> Users => Set<User>();
 
-        public TaskTrackerContext(DbContextOptions<TaskTrackerContext> opt) : base(opt) { }
+        public ChatHubContext(DbContextOptions<ChatHubContext> opt) : base(opt) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Additional config
