@@ -6,7 +6,9 @@ Started on 7. September 2023
 The ChatBomb project is a web application based on Discord with already known features.
 
 ## Features
-tba
+* Chatting with friends in private or in groups with Accounts / Admin
+* Call friends
+* More features are tbd
 
 ## Team members
 | Name                        | Email                    | Task   | 
