@@ -19,7 +19,7 @@ The ChatHub project is a web application based on Discord with already known fea
 | Ömer *Toprak*, 4CHIF        | top22166@spengergasse.at | tba    |
 
 ## Info 4 Team members
-Add this *appsettings.Development.json* to ChatHubProject.Webapi to start the backend server
+1. Add *appsettings.Development.json* to ChatHubProject.Webapi
 ```
 {
   "ConnectionStrings": {
@@ -38,6 +38,10 @@ Add this *appsettings.Development.json* to ChatHubProject.Webapi to start the ba
   },
   "AllowedHosts": "*"
 }
+```
+2. Add Container with this:
+```
+startServer.cmd
 ```
 ## Synchronize the repository to a folder
 
