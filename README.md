@@ -1,9 +1,9 @@
-# ChatBomb
+# ChatHub
 
 Started on 7. September 2023
 
 ## Description
-The ChatBomb project is a web application based on Discord with already known features.
+The ChatHub project is a web application based on Discord with already known features.
 
 ## Features
 * Chatting with friends in private or in groups with Accounts / Admin
@@ -19,11 +19,11 @@ The ChatBomb project is a web application based on Discord with already known fe
 | Ömer *Toprak*, 4CHIF        | top22166@spengergasse.at | tba    |
 
 ## Info 4 Team members
-Add this <strong> appsettings.Development.json to ChatBombProject.Webapi to start the backend server
+Add this <strong> appsettings.Development.json to ChatHubProject.Webapi to start the backend server
 ```
 {
   "ConnectionStrings": {
-    "Default": "Server=127.0.0.1,11433;Initial Catalog=ChatBombDb;User Id=sa;Password=SqlServer2019;TrustServerCertificate=true"
+    "Default": "Server=127.0.0.1,11433;Initial Catalog=ChatHubDb;User Id=sa;Password=SqlServer2019;TrustServerCertificate=true"
   },
   "Secret": "JEKEXCOywg+FqXOSDnmOk/GixQo+xi16hQjehDF46vE4DxgHdbsiR7JpXELO831Z6n9T32mgqc4W4S2sjtNESeHNp4KyYMPcclsyhDuRNxXX4RiOBnrHrc5TTuYQSqNJfUW691i2eu7KvvWpn8JftfHU3NjH+TccklFjPBy7k28=",
   "Logging": {
@@ -42,7 +42,7 @@ Install the latest version of [git](https://git-scm.com/downloads) with the defa
 Then open a terminal, navigate to a suitable folder and run the following command:
 
 ```
-git clone https://github.com/Momo00o0/ChatBomb.git
+git clone https://github.com/Momo00o0/ChatHub.git
 ```
 
 To download the latest version from the server, run the following file. **Warning:** All local changes will be reset.
