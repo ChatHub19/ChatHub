@@ -19,13 +19,16 @@ The ChatHub project is a web application based on Discord with already known fea
 | Ömer *Toprak*, 4CHIF        | top22166@spengergasse.at | tba    |
 
 ## Info 4 Team members
-Add this <strong> appsettings.Development.json to ChatHubProject.Webapi to start the backend server
+Add this *appsettings.Development.json* to ChatHubProject.Webapi to start the backend server
 ```
 {
   "ConnectionStrings": {
     "Default": "Server=127.0.0.1,11433;Initial Catalog=ChatHubDb;User Id=sa;Password=SqlServer2019;TrustServerCertificate=true"
   },
   "Secret": "JEKEXCOywg+FqXOSDnmOk/GixQo+xi16hQjehDF46vE4DxgHdbsiR7JpXELO831Z6n9T32mgqc4W4S2sjtNESeHNp4KyYMPcclsyhDuRNxXX4RiOBnrHrc5TTuYQSqNJfUW691i2eu7KvvWpn8JftfHU3NjH+TccklFjPBy7k28=",
+  "Searchuser": "",
+  "Searchpass": "",
+  "LocalAdmins": "",
   "Logging": {
     "LogLevel": {
       "Default": "Information",
