@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatHubProject.Webapi", "ChatHubProject.Webapi\ChatHubProject.Webapi.csproj", "{994FFBED-C7BF-4577-92FF-49143D8BA397}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8F5E6C29-13D1-42E9-A990-A844D7B48778}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatHubProject.Application", "ChatHubProject.Application\ChatHubProject.Application.csproj", "{43B35235-847D-47BF-B3EE-7C0442CB4634}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatHubProject.Webapi", "src\ChatHubProject.Webapi\ChatHubProject.Webapi.csproj", "{12BF7FE7-79D7-45F0-97D2-79F1025FED63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatHubProject.Application", "src\ChatHubProject.Application\ChatHubProject.Application.csproj", "{7FEA8F7E-4866-43C6-A4A0-F7EF64BB0CFB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{4BE15B9E-0E7C-4412-993F-B05A9200F7DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatHubProject.Application.Tests", "test\ChatHubProject.Application.Tests\ChatHubProject.Application.Tests.csproj", "{391940E6-2513-41DB-BC69-D40D9123B0EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,13 +22,22 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{994FFBED-C7BF-4577-92FF-49143D8BA397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{994FFBED-C7BF-4577-92FF-49143D8BA397}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{994FFBED-C7BF-4577-92FF-49143D8BA397}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{994FFBED-C7BF-4577-92FF-49143D8BA397}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43B35235-847D-47BF-B3EE-7C0442CB4634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43B35235-847D-47BF-B3EE-7C0442CB4634}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43B35235-847D-47BF-B3EE-7C0442CB4634}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43B35235-847D-47BF-B3EE-7C0442CB4634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12BF7FE7-79D7-45F0-97D2-79F1025FED63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12BF7FE7-79D7-45F0-97D2-79F1025FED63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12BF7FE7-79D7-45F0-97D2-79F1025FED63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12BF7FE7-79D7-45F0-97D2-79F1025FED63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FEA8F7E-4866-43C6-A4A0-F7EF64BB0CFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FEA8F7E-4866-43C6-A4A0-F7EF64BB0CFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FEA8F7E-4866-43C6-A4A0-F7EF64BB0CFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FEA8F7E-4866-43C6-A4A0-F7EF64BB0CFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{391940E6-2513-41DB-BC69-D40D9123B0EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{391940E6-2513-41DB-BC69-D40D9123B0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{391940E6-2513-41DB-BC69-D40D9123B0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{391940E6-2513-41DB-BC69-D40D9123B0EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{12BF7FE7-79D7-45F0-97D2-79F1025FED63} = {8F5E6C29-13D1-42E9-A990-A844D7B48778}
+		{7FEA8F7E-4866-43C6-A4A0-F7EF64BB0CFB} = {8F5E6C29-13D1-42E9-A990-A844D7B48778}
+		{391940E6-2513-41DB-BC69-D40D9123B0EC} = {4BE15B9E-0E7C-4412-993F-B05A9200F7DE}
 	EndGlobalSection
 EndGlobal
