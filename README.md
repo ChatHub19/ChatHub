@@ -44,16 +44,13 @@ The ChatHub project is a web application based on Discord with already known fea
 startServer.cmd
 ```
 ## Synchronize the repository to a folder
-
-Run the following command to download the latest version from the server:
-
+Run the following command to download the repository:
 ```
 git clone https://github.com/Momo00o0/ChatHub.git
 ```
-
 > Install the latest version of [git](https://git-scm.com/downloads) with the default settings.
-> **Warning:** All local changes will be reset.
 
+Run the following command to download the latest version from the server:
 **Windows**
 ```
 resetGit.cmd
@@ -64,9 +61,9 @@ resetGit.cmd
 chmod a+x resetGit.sh
 ./resetGit.sh
 ```
+> **Warning:** All local changes will be reset.
 
 ### Running the server
-
 **Windows**
 ```
 startServer.cmd
