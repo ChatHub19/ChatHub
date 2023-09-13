@@ -50,7 +50,8 @@ git clone https://github.com/Momo00o0/ChatHub.git
 ```
 > Install the latest version of [git](https://git-scm.com/downloads) with the default settings.
 
-Run the following command to download the latest version from the server:
+Run the following command to download the latest version from the server: <br>
+
 **Windows**
 ```
 resetGit.cmd
