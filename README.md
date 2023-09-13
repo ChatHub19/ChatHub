@@ -45,14 +45,14 @@ startServer.cmd
 ```
 ## Synchronize the repository to a folder
 
-Install the latest version of [git](https://git-scm.com/downloads) with the default settings.
-Then open a terminal, navigate to a suitable folder and run the following command:
+Run the following command to download the latest version from the server:
 
 ```
 git clone https://github.com/Momo00o0/ChatHub.git
 ```
 
-To download the latest version from the server, run the following file. **Warning:** All local changes will be reset.
+> Install the latest version of [git](https://git-scm.com/downloads) with the default settings.
+> **Warning:** All local changes will be reset.
 
 **Windows**
 ```
