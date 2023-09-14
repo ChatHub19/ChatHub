@@ -15,6 +15,10 @@ namespace ChatHubProject.Application.Infrastructure
         }
 
         public DbSet<User> Users => Set<User>();
+
+        public DbSet<FriendRequest> FriendRequests => Set<FriendRequest>();
+
+       
         public DbSet<Message> Messages => Set<Message>();
 
         public DbSet<Server> Servers => Set<Server>();
@@ -93,17 +97,19 @@ namespace ChatHubProject.Application.Infrastructure
             await Users.AddRangeAsync(users);
             await SaveChangesAsync();
 
-            var message = new Faker<Message>("en").CustomInstantiator(f =>
+            var requests = new Faker<FriendRequest>("en").CustomInstantiator(f =>
             {
-                return new Message(
-                    text: f.Lorem.Word(),
-                    user: f.Random.ListItem(users),
-                    time: DateTime.Now)
+                return new FriendRequest(
+                    senderUser: f.Random.ListItem(users),
+                    receiverUser: f.Random.ListItem(users),
+                    createdAt: DateTime.Now,
+                    url: f.Lorem.Text())
                 { Guid = f.Random.Guid() };
             })
             .Generate(10)
+            .GroupBy(a => a.CreatedAt).Select(g => g.First())
             .ToList();
-            await Messages.AddRangeAsync(message);
+            await FriendRequests.AddRangeAsync(requests);
             await SaveChangesAsync();
         }
 
