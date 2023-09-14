@@ -1,4 +1,6 @@
-﻿using ChatHubProject.Application.Infrastructure;
+﻿using AutoMapper;
+using ChatHubProject.Application.Dto;
+using ChatHubProject.Application.Infrastructure;
 using ChatHubProject.Application.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,16 +26,66 @@ namespace ChatHubProject.Webapi.Controllers
         private readonly IConfiguration _config;
         private readonly bool _isDevelopment;
         private readonly ChatHubContext _db;
+        private readonly IMapper _mapper;
 
-        public UserController(IConfiguration config, IHostEnvironment _env, ChatHubContext db)
+        public UserController(IConfiguration config, IHostEnvironment _env, ChatHubContext db, IMapper mapper)
         {
             _config = config;
             _isDevelopment = _env.IsDevelopment();
             _db = db;
+            _mapper = mapper;
+        }
+
+        /// <summary>
+        /// GET /api/user
+        /// List all users.
+        /// Only for users which has the role admin in the claim of the JWT.
+        /// </summary>
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var user = await _db.Users
+                .Select(a => new
+                {
+                    a.Username,
+                    a.Guid,
+                    a.Email,
+                    a.Password,
+                    a.Role,
+                })
+                .ToListAsync();
+            if (user is null) { return BadRequest(); }
+            return Ok(user);
+        }
+
+        /// <summary>
+        /// GET /api/user/guid
+        /// List one users.
+        /// Only for users which has the role admin in the claim of the JWT.
+        /// </summary>
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{guid:Guid}")]
+        public async Task<IActionResult> GetOneUser(Guid guid) 
+        {
+            var user = await _db.Users
+                .Where(a => a.Guid == guid)
+                .Select(a => new
+                {
+                    a.Username,
+                    a.Guid,
+                    a.Email,
+                    a.Password,
+                    a.Role,
+                })
+                .FirstOrDefaultAsync(a => a.Guid == guid);
+            if (user is null) { return NotFound(); }
+            return Ok(user);
         }
 
         /// <summary>
         /// POST /api/user/loginms
+        /// Login using student account
         /// </summary>
         /// <param name="credentials"></param>
         /// <returns></returns>
@@ -162,6 +214,43 @@ namespace ChatHubProject.Webapi.Controllers
                 user.Email,
                 user.Role,
             });
+        }
+
+        /// <summary>
+        /// DELETE Request /api/user/guid with JSON body
+        /// Deletes a user in the database.
+        /// Use Cascade to delete all child entities when parent entity is deleted
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        [HttpDelete("{guid:Guid}")]
+        public async Task<IActionResult> DeleteUser(Guid guid)
+        {
+            var users = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
+            if (users is null) { return NotFound(); }
+            _db.Users.Remove(users);
+            try { await _db.SaveChangesAsync(); }
+            catch (DbUpdateException) { return BadRequest(); }
+            return NoContent();
+        }
+
+        /// <summary>
+        /// PUT Request /api/user/guid with JSON body
+        /// Updates a user in the database. 
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <param name="listDto"></param>
+        /// <returns></returns>
+        [HttpPut("{guid:Guid}")]
+        public async Task<IActionResult> EditUser(Guid guid, UserDto userDto)
+        {
+            if (guid != userDto.Guid) { return BadRequest(); }
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
+            if (user is null) { return NotFound(); }
+            _mapper.Map(userDto, user);
+            try { await _db.SaveChangesAsync(); }
+            catch (DbUpdateException) { return BadRequest(); }
+            return NoContent();
         }
     }
 }
