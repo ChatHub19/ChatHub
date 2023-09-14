@@ -19,10 +19,6 @@ namespace ChatHubProject.Application.Infrastructure
         public DbSet<FriendRequest> FriendRequests => Set<FriendRequest>();
 
        
-
-        public DbSet<FriendRequest> FriendRequests => Set<FriendRequest>();
-
-       
         public DbSet<Message> Messages => Set<Message>();
 
         public DbSet<Server> Servers => Set<Server>();
