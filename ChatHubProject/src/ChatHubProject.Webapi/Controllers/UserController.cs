@@ -197,7 +197,7 @@ namespace ChatHubProject.Webapi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] CredentialsDto credentials)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.username);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.email);
             if (user is null)
             {
                 user = new User(credentials.username, credentials.password, credentials.email, Userrole.User);
@@ -219,7 +219,6 @@ namespace ChatHubProject.Webapi.Controllers
         /// <summary>
         /// DELETE Request /api/user/guid with JSON body
         /// Deletes a user in the database.
-        /// Use Cascade to delete all child entities when parent entity is deleted
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
@@ -239,7 +238,7 @@ namespace ChatHubProject.Webapi.Controllers
         /// Updates a user in the database. 
         /// </summary>
         /// <param name="guid"></param>
-        /// <param name="listDto"></param>
+        /// <param name="userDto"></param>
         /// <returns></returns>
         [HttpPut("{guid:Guid}")]
         public async Task<IActionResult> EditUser(Guid guid, UserDto userDto)
