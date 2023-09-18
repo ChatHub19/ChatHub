@@ -15,7 +15,7 @@ namespace ChatHubProject.Application.Model
         public Server(string name, User creator, int maxCapacity, string? description = null)
         {
             Name = name;
-            Creator = creator;
+            User = creator;
             MaxCapacity = maxCapacity;
             Description = description;
         }
@@ -26,7 +26,7 @@ namespace ChatHubProject.Application.Model
 
         public string Name { get; set; }
 
-        public User Creator { get; set; }
+        public User User { get; set; }
 
         public int MaxCapacity { get; set; }
 
