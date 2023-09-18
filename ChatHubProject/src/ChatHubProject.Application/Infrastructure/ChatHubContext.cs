@@ -15,6 +15,8 @@ namespace ChatHubProject.Application.Infrastructure
 
         public DbSet<User> Users => Set<User>();
 
+        public DbSet<Server> Servers => Set<Server>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Entity<Handin>().HasIndex("TaskId", "StudentId").IsUnique();
@@ -87,6 +89,21 @@ namespace ChatHubProject.Application.Infrastructure
             .GroupBy(a => a.Email).Select(g => g.First())
             .ToList();
             await Users.AddRangeAsync(users);
+            await SaveChangesAsync();
+
+            var servers = new Faker<Server>("en").CustomInstantiator(f =>
+            {
+                return new Server(
+                    name: f.Name.FullName(),
+                    creator: f.Random.ListItem(users),
+                    maxCapacity: f.Random.Number(3, 50),
+                    description: string.Join("", f.Lorem.Sentence().Split().TakeWhile((word, index) => index < 300)))
+                { Guid = f.Random.Guid() };
+            })
+            .Generate(15)
+            .GroupBy(s => s.Name).Select(g => g.First())
+            .ToList();
+            await Servers.AddRangeAsync(servers);
             await SaveChangesAsync();
         }
 
