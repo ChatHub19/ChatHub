@@ -17,6 +17,8 @@ namespace ChatHubProject.Application.Infrastructure
         public DbSet<User> Users => Set<User>();
         public DbSet<Message> Messages => Set<Message>();
 
+        public DbSet<Server> Servers => Set<Server>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Entity<Handin>().HasIndex("TaskId", "StudentId").IsUnique();

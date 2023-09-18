@@ -16,7 +16,7 @@ namespace ChatHubProject.Application.Dto
         [StringLength(30, MinimumLength = 2, ErrorMessage = "username must at least contain 2 letters")]
         string Name,
 
-        Guid CreatorGuid,
+        Guid UserGuid,  
 
         [Range(3, 50, ErrorMessage = "server must at least contain 3 members")]
         int MaxCapacity,
@@ -28,8 +28,8 @@ namespace ChatHubProject.Application.Dto
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var db = validationContext.GetRequiredService<ChatHubContext>();
-            if(!db.Users.Any(u => u.Guid == CreatorGuid)){
-                yield return new ValidationResult("User does not exist", new[] { nameof(CreatorGuid) });
+            if(!db.Users.Any(u => u.Guid == UserGuid)){
+                yield return new ValidationResult("User does not exist", new[] { nameof(UserGuid) });
             }
         }
     }
