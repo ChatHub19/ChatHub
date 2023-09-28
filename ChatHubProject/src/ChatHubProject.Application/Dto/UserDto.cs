@@ -17,6 +17,5 @@ namespace ChatHubProject.Application.Dto
         [EmailAddress]
         string Email,
 
-        [Range(1, 2, ErrorMessage = "range of userrole is invalid")]
-        Userrole Role);
+        string Userrole);
 }
