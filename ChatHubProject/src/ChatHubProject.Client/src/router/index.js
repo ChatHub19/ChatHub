@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '../store.js'
-import AuthView from '../views/AuthView.vue'
+import LoginSPGView from '../views/LoginSPGView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'auth',
-      component: AuthView
+      name: 'loginspg',
+      component: LoginSPGView
     },
   ]
 })

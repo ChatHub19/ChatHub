@@ -39,7 +39,7 @@ export default {
 				const userdata = (await axios.post('user/loginspg', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);  
-				await this.addDefaultList();      
+				alert("cool")    
         this.$router.push("/");
 			} catch (e) {
         if(e.response === undefined) { console.error(e); }
@@ -53,25 +53,25 @@ export default {
 </script>
 
 <style scoped>
+#login, #img, input, button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 #page {
   height: 100vh;
 	width: 100vw;
-	padding: 5rem;
+	padding: 1rem;
 }
 #login {
 	width: 100%;
 	height: 100%;
 }
-#img {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
 form {
-	height: 100%;
-	width: 50%;
+	width: 500px;
 	background: var(--theme-dark-color);
 	padding: 3rem;
+	border-radius: 15px;
 }
 input, button {
 	width: 100%;
@@ -85,10 +85,11 @@ input::placeholder {
 	color: white;
 }
 button{
-	font-weight: bolder;
-	background: linear-gradient(#82B4F6, #670DEB);
+	font-weight: 900;
+	color: black;
+	background: linear-gradient(to bottom right, #82B4F6, #670DEB);
 }
-img {
-	max-height: 250px;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 </style>
