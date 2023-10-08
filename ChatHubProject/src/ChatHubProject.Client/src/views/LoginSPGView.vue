@@ -53,6 +53,9 @@ export default {
 </script>
 
 <style scoped>
+* {
+  box-sizing: border-box;
+}
 #login, #img, input, button {
 	display: flex;
 	justify-content: center;
@@ -62,6 +65,11 @@ export default {
   height: 100vh;
 	width: 100vw;
 	padding: 1rem;
+	background: linear-gradient(
+		to bottom right,
+		var(--lightblue), 
+		var(--lightpurple)
+	);
 }
 #login {
 	width: 100%;
@@ -69,7 +77,7 @@ export default {
 }
 form {
 	width: 500px;
-	background: var(--theme-dark-color);
+	background: var(--theme-dark);
 	padding: 3rem;
 	border-radius: 15px;
 }
@@ -87,9 +95,6 @@ input::placeholder {
 button{
 	font-weight: 900;
 	color: black;
-	background: linear-gradient(to bottom right, #82B4F6, #670DEB);
-}
-*, *::before, *::after {
-  box-sizing: border-box;
+	background: linear-gradient(to bottom right, var(--lightblue), var(--lightpurple));
 }
 </style>

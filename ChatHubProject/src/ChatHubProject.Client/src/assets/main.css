@@ -1,9 +1,10 @@
 :root {
-  --theme-dark-color: #1F262A;
+  --theme-dark: #1F262A;
+  --lightblue: #82B4F6;
+  --lightpurple: #670DEB;
 }
 html, body {
   height: 100%;
   width: 100%;
   font-family: 'Ubuntu', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(#82B4F6, #670DEB);
 }
