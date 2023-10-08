@@ -21,7 +21,8 @@ namespace ChatHubProject.Webapi.Controllers
     [AllowAnonymous]
     public class UserController : ControllerBase
     {
-        public record CredentialsDto(string username, string password, string email);
+        public record LoginDto(string Username, string Password);
+        public record RegisterDto(string Username, string Password, string Email);
 
         private readonly IConfiguration _config;
         private readonly bool _isDevelopment;
@@ -84,13 +85,13 @@ namespace ChatHubProject.Webapi.Controllers
         }
 
         /// <summary>
-        /// POST /api/user/loginms
+        /// POST /api/user/loginspg
         /// Login using student account
         /// </summary>
         /// <param name="credentials"></param>
         /// <returns></returns>
         [HttpPost("loginspg")]
-        public async Task<IActionResult> LoginSPG([FromBody] CredentialsDto credentials)
+        public async Task<IActionResult> LoginSPG([FromBody] LoginDto credentials)
         {
             var lifetime = TimeSpan.FromHours(3);
             var searchuser = _config["Searchuser"];
@@ -99,20 +100,20 @@ namespace ChatHubProject.Webapi.Controllers
             var localAdmins = _config["LocalAdmins"].Split(",");
 
             using var service = _isDevelopment && !string.IsNullOrEmpty(searchuser)
-                ? AdService.Login(searchuser, searchpass, credentials.username)
-                : AdService.Login(credentials.username, credentials.password);
+                ? AdService.Login(searchuser, searchpass, credentials.Username)
+                : AdService.Login(credentials.Username, credentials.Password);
             var currentUser = service.CurrentUser;
             if (currentUser is null) { return Unauthorized(); }
 
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.username);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.Username);
             if (user is null)
             {
-                user = new User(credentials.username, credentials.password, credentials.email, Userrole.User);
+                user = new User(credentials.Username, credentials.Password, $"{credentials.Username}@spengergasse.at", Userrole.User);
                 await _db.Users.AddAsync(user);
                 try { await _db.SaveChangesAsync(); }
                 catch (DbUpdateException) { return BadRequest(); }
             }
-            if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
+            if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
 
             var role = localAdmins.Contains(currentUser.Cn)
                             ? AdUserRole.Management.ToString() : currentUser.Role.ToString();
@@ -156,14 +157,14 @@ namespace ChatHubProject.Webapi.Controllers
         /// <param name="credentials"></param>
         /// <returns></returns>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] CredentialsDto credentials)
+        public async Task<IActionResult> Login([FromBody] LoginDto credentials)
         {
             var secret = Convert.FromBase64String(_config["Secret"]);
             var lifetime = TimeSpan.FromHours(3);
 
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.username);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.Username);
             if (user is null) { return Unauthorized(); }
-            if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
+            if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
 
             var role = Userrole.User.ToString();
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -171,8 +172,8 @@ namespace ChatHubProject.Webapi.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                new Claim(ClaimTypes.Name, user.Username.ToString()),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
+                    new Claim(ClaimTypes.Name, user.Username.ToString()),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
                 }),
                 Expires = DateTime.UtcNow + lifetime,
                 SigningCredentials = new SigningCredentials(
@@ -195,18 +196,18 @@ namespace ChatHubProject.Webapi.Controllers
         /// <param name="credentials"></param>
         /// <returns></returns>
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] CredentialsDto credentials)
+        public async Task<IActionResult> Register([FromBody] RegisterDto credentials)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.email);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.Email);
             if (user is null)
             {
-                user = new User(credentials.username, credentials.password, credentials.email, Userrole.User);
+                user = new User(credentials.Username, credentials.Password, credentials.Email, Userrole.User);
                 await _db.Users.AddAsync(user);
                 try { await _db.SaveChangesAsync(); }
                 catch (DbUpdateException) { return BadRequest(); }
             }
             else { return BadRequest("User is already in the database."); }
-            if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
+            if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
             return Ok(new
             {
                 user.Username,
