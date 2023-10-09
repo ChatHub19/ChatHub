@@ -18,6 +18,8 @@ import 'vue3-toastify/dist/index.css';
 					<input type="password" required placeholder="Password" v-model="loginModel.password"/>
 				</div>
 				<button type="submit" class="button">Login</button>
+				<span> Don't have an account? </span> 
+				<router-link id="register-btn" to="/register"> Register </router-link> 
 			</form>			
 		</div>
 	</div>
@@ -36,7 +38,7 @@ export default {
 	methods: {
 		async login() {
 			try {
-				const userdata = (await axios.post('user/loginspg', this.loginModel)).data;
+				const userdata = (await axios.post('user/login', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);  
 				alert("cool")    
@@ -75,6 +77,10 @@ export default {
 	width: 100%;
 	height: 100%;
 }
+#register-btn {
+	text-decoration: none;
+	color: var(--lightblue);
+}
 form {
 	width: 500px;
 	background: var(--theme-dark);
@@ -86,15 +92,22 @@ input, button {
 	padding: .5rem 1rem;
 	color: white;
 	border-radius: 5px;
-	margin-bottom: 20px;
 	background: #40444b;
+}
+input {
+	margin-bottom: 20px;
+}
+button {
+	margin-bottom: 10px;
+	font-weight: 500;
+	color: white;
+	background: linear-gradient(to bottom right, var(--lightblue), var(--lightpurple));
 }
 input::placeholder {
 	color: white;
 }
-button{
-	font-weight: 900;
-	color: black;
-	background: linear-gradient(to bottom right, var(--lightblue), var(--lightpurple));
+span {
+	opacity: 0.5;
+	color: white;
 }
 </style>
