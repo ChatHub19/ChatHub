@@ -42,18 +42,18 @@ namespace ChatHubProject.Webapi.Controllers
         /// List all users.
         /// Only for users which has the role admin in the claim of the JWT.
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administration")]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
             var user = await _db.Users
                 .Select(a => new
                 {
-                    a.Username,
                     a.Guid,
+                    a.Username,
                     a.Email,
-                    a.Password,
                     a.Role,
+                    a.Group,
                 })
                 .ToListAsync();
             if (user is null) { return BadRequest(); }
@@ -73,11 +73,11 @@ namespace ChatHubProject.Webapi.Controllers
                 .Where(a => a.Guid == guid)
                 .Select(a => new
                 {
-                    a.Username,
                     a.Guid,
+                    a.Username,
                     a.Email,
-                    a.Password,
                     a.Role,
+                    a.Group,
                 })
                 .FirstOrDefaultAsync(a => a.Guid == guid);
             if (user is null) { return NotFound(); }
@@ -90,104 +90,97 @@ namespace ChatHubProject.Webapi.Controllers
         /// </summary>
         /// <param name="credentials"></param>
         /// <returns></returns>
-        [HttpPost("loginspg")]
+        [HttpPost("login")]
         public async Task<IActionResult> LoginSPG([FromBody] LoginDto credentials)
         {
+            var secret = Convert.FromBase64String(_config["Secret"]);
             var lifetime = TimeSpan.FromHours(3);
             var searchuser = _config["Searchuser"];
             var searchpass = _config["Searchpass"];
-            var secret = Convert.FromBase64String(_config["Secret"]);
             var localAdmins = _config["LocalAdmins"].Split(",");
 
-            using var service = _isDevelopment && !string.IsNullOrEmpty(searchuser)
-                ? AdService.Login(searchuser, searchpass, credentials.Username)
-                : AdService.Login(credentials.Username, credentials.Password);
-            var currentUser = service.CurrentUser;
-            if (currentUser is null) { return Unauthorized(); }
-
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.Username);
-            if (user is null)
+            if (user is not null) 
             {
-                user = new User(credentials.Username, credentials.Password, $"{credentials.Username}@spengergasse.at", Userrole.User);
-                await _db.Users.AddAsync(user);
-                try { await _db.SaveChangesAsync(); }
-                catch (DbUpdateException) { return BadRequest(); }
+                if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
+
+                var role = Userrole.Pupil.ToString();
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim(ClaimTypes.Name, user.Username.ToString()),
+                        new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
+                    }),
+                    Expires = DateTime.UtcNow + lifetime,
+                    SigningCredentials = new SigningCredentials(
+                        new SymmetricSecurityKey(secret),
+                        SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                return Ok(new
+                {
+                    user.Username,
+                    Role = role,
+                    UserGuid = user.Guid,
+                    user.Group,
+                    Token = tokenHandler.WriteToken(token)
+                });
             }
-            if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
+            else
+            {
+                using var service = _isDevelopment && !string.IsNullOrEmpty(searchuser)
+                    ? AdService.Login(searchuser, searchpass, credentials.Username)
+                    : AdService.Login(credentials.Username, credentials.Password);
+                var currentUser = service.CurrentUser;
+                if (currentUser is null) { return Unauthorized(); }
 
-            var role = localAdmins.Contains(currentUser.Cn)
-                            ? AdUserRole.Management.ToString() : currentUser.Role.ToString();
-            var group = (currentUser.Role, currentUser.Classes.Length > 0) switch
-            {
-                (AdUserRole.Pupil, true) => currentUser.Classes[0],
-                (AdUserRole.Pupil, false) => "Unknown class",
-                (AdUserRole.Teacher, _) => AdUserRole.Teacher.ToString(),
-                (AdUserRole.Management, _) => AdUserRole.Teacher.ToString(),
-                (_, _) => AdUserRole.Administration.ToString()
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                // Payload for our JWT.
-                Subject = new ClaimsIdentity(new Claim[]
+                if (user is null)
                 {
-                new Claim(ClaimTypes.Name, currentUser.Cn),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
-                new Claim("Group", group)
-                }),
-                Expires = DateTime.UtcNow + lifetime,
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(secret),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return Ok(new
-            {
-                Username = currentUser.Cn,
-                UserGuid = user.Guid,
-                Role = role,
-                Group = group,
-                Token = tokenHandler.WriteToken(token)
-            });
-        }
+                    user = new User(credentials.Username, credentials.Password, $"{credentials.Username}@spengergasse.at", Userrole.Pupil);
+                    await _db.Users.AddAsync(user);
+                    try { await _db.SaveChangesAsync(); }
+                    catch (DbUpdateException) { return BadRequest(); }
+                }
+                if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
 
-        /// <summary>
-        /// POST /api/user/login
-        /// </summary>
-        /// <param name="credentials"></param>
-        /// <returns></returns>
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto credentials)
-        {
-            var secret = Convert.FromBase64String(_config["Secret"]);
-            var lifetime = TimeSpan.FromHours(3);
-
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.Username);
-            if (user is null) { return Unauthorized(); }
-            if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
-
-            var role = Userrole.User.ToString();
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
+                var role = localAdmins.Contains(currentUser.Cn)
+                                ? AdUserRole.Management.ToString()
+                                : currentUser.Role.ToString();
+                var group = (currentUser.Role, currentUser.Classes.Length > 0) switch
                 {
-                    new Claim(ClaimTypes.Name, user.Username.ToString()),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
-                }),
-                Expires = DateTime.UtcNow + lifetime,
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(secret),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return Ok(new
-            {
-                user.Username,
-                Role = role,
-                UserGuid = user.Guid,
-                Token = tokenHandler.WriteToken(token)
-            });
+                    (AdUserRole.Pupil, true) => currentUser.Classes[0],
+                    (AdUserRole.Pupil, false) => "Unknown class",
+                    (AdUserRole.Teacher, _) => AdUserRole.Teacher.ToString(),
+                    (AdUserRole.Management, _) => AdUserRole.Teacher.ToString(),
+                    (_, _) => AdUserRole.Administration.ToString()
+                };
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    // Payload for our JWT.
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim(ClaimTypes.Name, currentUser.Cn),
+                        new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+                        new Claim("Group", group)
+                    }),
+                    Expires = DateTime.UtcNow + lifetime,
+                    SigningCredentials = new SigningCredentials(
+                        new SymmetricSecurityKey(secret),
+                        SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                return Ok(new
+                {
+                    Username = currentUser.Cn,
+                    UserGuid = user.Guid,
+                    Role = role,
+                    Group = group,
+                    Token = tokenHandler.WriteToken(token)
+                });
+            }
         }
 
         /// <summary>
@@ -201,7 +194,7 @@ namespace ChatHubProject.Webapi.Controllers
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.Email);
             if (user is null)
             {
-                user = new User(credentials.Username, credentials.Password, credentials.Email, Userrole.User);
+                user = new User(credentials.Username, credentials.Password, credentials.Email, Userrole.Pupil);
                 await _db.Users.AddAsync(user);
                 try { await _db.SaveChangesAsync(); }
                 catch (DbUpdateException) { return BadRequest(); }
