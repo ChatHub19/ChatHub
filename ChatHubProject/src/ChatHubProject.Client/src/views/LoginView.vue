@@ -40,12 +40,14 @@ export default {
 			try {
 				const userdata = (await axios.post('user/login', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
-        this.$store.commit('authenticate', userdata);  
-				alert("cool")    
-        this.$router.push("/");
+        this.$store.commit('authenticate', userdata);   
+				alert("vely gud")  
+        // this.$router.push("/");
 			} catch (e) {
-        if(e.response === undefined) { console.error(e); }
-        else if (e.response.status == 401) {
+				if (e.response.status == 500) {
+          toast.error("Login failed! User does not exist!");
+        }
+        if (e.response.status == 401) {
           toast.error("Login failed! Invalid credentials!");
         }
       }
