@@ -1,5 +1,5 @@
 ﻿namespace ChatHubProject.Application.Model
 {
-    public enum Userrole
-    { User = 1, Admin = 2 }
+    public enum Userrole { Other = 0, Pupil = 1, Teacher = 2, Administration = 3, Management= 4 }
 }
+
