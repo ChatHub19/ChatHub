@@ -40,9 +40,8 @@ export default {
 			try {
 				const userdata = (await axios.post('user/login', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
-        this.$store.commit('authenticate', userdata);   
-				alert("vely gud")  
-        // this.$router.push("/");
+        this.$store.commit('authenticate', userdata);    
+        this.$router.push("/");
 			} catch (e) {
 				if (e.response.status == 500) {
           toast.error("Login failed! User does not exist!");
@@ -58,6 +57,8 @@ export default {
 
 <style scoped>
 * {
+	margin: 0;
+	padding: 0;
   box-sizing: border-box;
 }
 #login, #img, input, button {
@@ -112,4 +113,21 @@ span {
 	opacity: 0.5;
 	color: white;
 }
+@media (max-width: 480px) { 
+  #page, #login {
+    padding: 0;
+  }
+  form {
+		height: 100%;
+    border-radius: 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+  }
+	.form-group {
+		width: 100%;
+		margin-bottom: 20px;
+	}
+} 
 </style>

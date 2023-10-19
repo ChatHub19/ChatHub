@@ -6,20 +6,23 @@ import 'vue3-toastify/dist/index.css';
 
 <template>
   <div id="page" class="container-fluid">
-		<div id="login" class="container-fluid">
-			<form @submit.prevent="login" class="container-fluid">
+		<div id="register" class="container-fluid">
+			<form @submit.prevent="register" class="container-fluid">
 				<div id="img" >
 					<img src="@/assets/logo-vertical.png" alt="logo" class="img-fluid">
 				</div>
 				<div class="form-group">
-					<input type="text" required placeholder="Username" v-model="loginModel.username"/>
+					<input type="text" required placeholder="Username" v-model="registerModel.username"/>
+				</div>
+        <div class="form-group">
+					<input type="email" required placeholder="Email" v-model="registerModel.email"/>
 				</div>
 				<div class="form-group">
-					<input type="password" required placeholder="Password" v-model="loginModel.password"/>
+					<input type="password" required placeholder="Password" v-model="registerModel.password"/>
 				</div>
-				<button type="submit" class="button">Login</button>
-				<span> Don't have an account? </span> 
-				<router-link id="register-btn" to="/register"> Register </router-link> 
+				<button type="submit" class="button"> Register </button>
+				<span> Have an account? </span> 
+				<router-link id="register-btn" to="/"> Login </router-link> 
 			</form>			
 		</div>
 	</div>
@@ -29,26 +32,27 @@ import 'vue3-toastify/dist/index.css';
 export default {
 	data() {
 		return {
-			loginModel: {
+			registerModel: {
 				username: "",
+        email: "",
 				password: "",
 			}
 		}
 	},
 	methods: {
-		async login() {
+		async register() {
 			try {
-				const userdata = (await axios.post('user/login', this.loginModel)).data;
+				const userdata = (await axios.post('user/register', this.registerModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);   
 				alert("vely gud")  
-        // this.$router.push("/");
+        this.$router.push("/");
 			} catch (e) {
-				if (e.response.status == 500) {
-          toast.error("Login failed! User does not exist!");
-        }
-        if (e.response.status == 401) {
+				if (e.response.status == 401) {
           toast.error("Login failed! Invalid credentials!");
+        }
+        if (e.response.status == 400) {
+          toast.error("User is already in the database!");
         }
       }
 		},
@@ -58,9 +62,11 @@ export default {
 
 <style scoped>
 * {
+	margin: 0;
+	padding: 0;
   box-sizing: border-box;
 }
-#login, #img, input, button {
+#register, #img, input, button {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -75,7 +81,7 @@ export default {
 		var(--lightpurple)
 	);
 }
-#login {
+#register {
 	width: 100%;
 	height: 100%;
 }
@@ -112,4 +118,16 @@ span {
 	opacity: 0.5;
 	color: white;
 }
+/* Media Query for Mobile Devices */ 
+@media (max-width: 480px) { 
+  #page, #register {
+    padding: 0;
+  }
+  #register {
+    align-items: initial  ;
+  }
+  form {
+    border-radius: 0;
+  }
+} 
 </style>

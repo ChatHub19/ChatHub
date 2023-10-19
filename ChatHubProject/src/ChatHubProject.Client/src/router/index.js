@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '../store.js'
+import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 
@@ -8,6 +9,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'home',
+      component: HomeView,
+      meta: { authorize: true },
+    },
+    {
+      path: '/login',
       name: 'login',
       component: LoginView
     },
@@ -22,7 +29,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authenticated = store.state.user.isLoggedIn;
   if (to.meta.authorize && !authenticated) {
-    next("/");
+    next("/login");
     return;
   }
 // If the user wants to switch to another list while remaining on the current list, the tasks won't be refreshed.
