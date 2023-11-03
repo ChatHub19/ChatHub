@@ -23,8 +23,6 @@ namespace ChatHubProject.Application.Model
             Group = group;
         }
 
-        //[Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public Guid Guid { get; set; }
         public string Username { get; set; }
