@@ -7,11 +7,13 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ChatHubProject.Application.Model;
 using ChatHubProject.Application.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatHubProject.Webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public abstract class EntityReadController<TEntity> : ControllerBase where TEntity : class, IEntity
     {
         protected readonly ChatHubContext _db;

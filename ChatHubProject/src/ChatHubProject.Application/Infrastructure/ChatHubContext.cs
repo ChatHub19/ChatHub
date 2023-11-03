@@ -57,12 +57,12 @@ namespace ChatHubProject.Application.Infrastructure
                     username: "admin",
                     password: "Password1234!",
                     email: "admin@gmail.com",
-                    role: Userrole.Administration),
+                    role: Userrole.Administration.ToString()),
                 new User(
                     username: "pupil",
                     password: "Password1234!",
                     email: "user@gmail.com",
-                    role: Userrole.Pupil),
+                    role: Userrole.Pupil.ToString()),
             };
             await Users.AddRangeAsync(users);
             await SaveChangesAsync();
@@ -80,7 +80,7 @@ namespace ChatHubProject.Application.Infrastructure
                     username: username.ToLower(),
                     password: "111",
                     email: $"{username.ToLower()}@gmail.com",
-                    role: f.PickRandom<Userrole>())
+                    role: f.PickRandom<Userrole>().ToString())
                 { Guid = f.Random.Guid() };
             })
             .Generate(10)
