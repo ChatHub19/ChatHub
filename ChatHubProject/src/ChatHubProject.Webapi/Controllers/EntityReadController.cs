@@ -7,11 +7,13 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ChatHubProject.Application.Model;
 using ChatHubProject.Application.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatHubProject.Webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public abstract class EntityReadController<TEntity> : ControllerBase where TEntity : class, IEntity
     {
         protected readonly ChatHubContext _db;
@@ -40,7 +42,8 @@ namespace ChatHubProject.Webapi.Controllers
 
         protected async Task<IActionResult> GetByGuid<TDto>(Guid guid)
         {
-            var result = await _mapper.ProjectTo<TDto>(_db.Set<TEntity>().Where(e => e.Guid == guid))
+            var result = await _mapper
+                .ProjectTo<TDto>(_db.Set<TEntity>().Where(e => e.Guid == guid))
                 .FirstOrDefaultAsync();
             if (result is null) return NotFound();
             return Ok(result);

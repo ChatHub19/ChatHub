@@ -16,77 +16,47 @@ using System.Threading.Tasks;
 
 namespace ChatHubProject.Webapi.Controllers
 {
-    [ApiController]
-    [Route("/api/[controller]")]
-    [AllowAnonymous]
-    public class UserController : ControllerBase
+    public class UserController : EntityReadController<User>
     {
-        public record LoginDto(string Username, string Password);
-        public record RegisterDto(string Username, string Password, string Email);
-
         private readonly IConfiguration _config;
         private readonly bool _isDevelopment;
-        private readonly ChatHubContext _db;
-        private readonly IMapper _mapper;
 
-        public UserController(IConfiguration config, IHostEnvironment _env, ChatHubContext db, IMapper mapper)
+        public UserController(ChatHubContext db, IMapper mapper, IConfiguration config, IHostEnvironment _env) : base(db, mapper)
         {
             _config = config;
             _isDevelopment = _env.IsDevelopment();
-            _db = db;
-            _mapper = mapper;
         }
 
         /// <summary>
-        /// GET /api/user
-        /// List all users.
-        /// Only for users which has the role admin in the claim of the JWT.
+        /// GET /api/user/
         /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Administration")]
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var user = await _db.Users
-                .Select(a => new
-                {
-                    a.Guid,
-                    a.Username,
-                    a.Email,
-                    a.Role,
-                    a.Group,
-                })
-                .ToListAsync();
-            if (user is null) { return BadRequest(); }
-            return Ok(user);
-        }
+        public Task<IActionResult> GetAllUser() => GetAll<UserDto>();
 
         /// <summary>
         /// GET /api/user/guid
-        /// List one users.
-        /// Only for users which has the role admin in the claim of the JWT.
         /// </summary>
-        [Authorize(Roles = "Admin")]
-        [HttpGet("{guid:Guid}")]
-        public async Task<IActionResult> GetOneUser(Guid guid) 
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Administration")]
+        [HttpGet("{guid}")]
+        public Task<IActionResult> GetUser(Guid guid)
         {
-            var user = await _db.Users
-                .Where(a => a.Guid == guid)
-                .Select(a => new
-                {
-                    a.Guid,
-                    a.Username,
-                    a.Email,
-                    a.Role,
-                    a.Group,
-                })
-                .FirstOrDefaultAsync(a => a.Guid == guid);
-            if (user is null) { return NotFound(); }
-            return Ok(user);
+            return GetByGuid(guid, a => new
+            {
+                a.Guid,
+                a.Username,
+                a.Email,
+                a.Role,
+                a.Group,
+            });
         }
 
         /// <summary>
         /// POST /api/user/loginspg
-        /// Login using student account
+        /// Login using either student or self-made account
         /// </summary>
         /// <param name="credentials"></param>
         /// <returns></returns>
@@ -138,7 +108,7 @@ namespace ChatHubProject.Webapi.Controllers
 
                 if (user is null)
                 {
-                    user = new User(credentials.Username, credentials.Password, $"{credentials.Username}@spengergasse.at", Userrole.Pupil);
+                    user = new User(credentials.Username, credentials.Password, $"{credentials.Username}@spengergasse.at", Userrole.Pupil.ToString());
                     await _db.Users.AddAsync(user);
                     try { await _db.SaveChangesAsync(); }
                     catch (DbUpdateException) { return BadRequest(); }
@@ -194,7 +164,7 @@ namespace ChatHubProject.Webapi.Controllers
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.Email);
             if (user is null)
             {
-                user = new User(credentials.Username, credentials.Password, credentials.Email, Userrole.Pupil);
+                user = new User(credentials.Username, credentials.Password, credentials.Email, Userrole.Pupil.ToString());
                 await _db.Users.AddAsync(user);
                 try { await _db.SaveChangesAsync(); }
                 catch (DbUpdateException) { return BadRequest(); }

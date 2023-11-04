@@ -14,7 +14,7 @@ namespace ChatHubProject.Application.Model
         protected User() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        public User(string username, string password, string email, Userrole role, string group = "No Group")
+        public User(string username, string password, string email, string role, string? group = "No Group")
         {
             Username = username;
             SetPassword(password);
@@ -23,6 +23,8 @@ namespace ChatHubProject.Application.Model
             Group = group;
         }
 
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public Guid Guid { get; set; }
         public string Username { get; set; }
@@ -30,8 +32,8 @@ namespace ChatHubProject.Application.Model
         public string Salt { get; set; }
         public string PasswordHash { get; set; }
         public string Email { get; set; }
-        public Userrole Role { get; set; }
-        public string Group { get; set; }
+        public string Role { get; set; }
+        public string? Group { get; set; }
 
         /// <summary>
         /// takes a password, generates a random salt, and combines it with the password to create a hashed value.
