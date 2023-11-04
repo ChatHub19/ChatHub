@@ -42,7 +42,8 @@ namespace ChatHubProject.Webapi.Controllers
 
         protected async Task<IActionResult> GetByGuid<TDto>(Guid guid)
         {
-            var result = await _mapper.ProjectTo<TDto>(_db.Set<TEntity>().Where(e => e.Guid == guid))
+            var result = await _mapper
+                .ProjectTo<TDto>(_db.Set<TEntity>().Where(e => e.Guid == guid))
                 .FirstOrDefaultAsync();
             if (result is null) return NotFound();
             return Ok(result);

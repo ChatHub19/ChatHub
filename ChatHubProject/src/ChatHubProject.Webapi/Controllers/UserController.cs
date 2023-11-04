@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace ChatHubProject.Webapi.Controllers
 {
-    public partial class UserController : EntityReadController<User>
+    public class UserController : EntityReadController<User>
     {
         private readonly IConfiguration _config;
         private readonly bool _isDevelopment;
@@ -27,14 +27,24 @@ namespace ChatHubProject.Webapi.Controllers
             _isDevelopment = _env.IsDevelopment();
         }
 
+        /// <summary>
+        /// GET /api/user/
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Administration")]
         [HttpGet]
-        public Task<IActionResult> GetAllUser() => GetAll<AllUserDto>();
+        public Task<IActionResult> GetAllUser() => GetAll<UserDto>();
 
+        /// <summary>
+        /// GET /api/user/guid
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Administration")]
         [HttpGet("{guid}")]
-        public Task<IActionResult> GetUser(Guid guid) => GetByGuid(guid, a =>
-            new
+        public Task<IActionResult> GetUser(Guid guid)
+        {
+            return GetByGuid(guid, a => new
             {
                 a.Guid,
                 a.Username,
@@ -42,11 +52,11 @@ namespace ChatHubProject.Webapi.Controllers
                 a.Role,
                 a.Group,
             });
-
+        }
 
         /// <summary>
         /// POST /api/user/loginspg
-        /// Login using student account
+        /// Login using either student or self-made account
         /// </summary>
         /// <param name="credentials"></param>
         /// <returns></returns>

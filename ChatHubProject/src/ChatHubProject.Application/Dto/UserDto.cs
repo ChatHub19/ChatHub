@@ -17,7 +17,7 @@ namespace ChatHubProject.Application.Dto
         [EmailAddress]
         string Email,
 
-        string Userrole,
+        string Role,
 
         string? Group);
 }

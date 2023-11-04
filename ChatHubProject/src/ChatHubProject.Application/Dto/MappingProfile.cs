@@ -7,8 +7,8 @@ namespace ChatHubProject.Application.Dto
     {
         public MappingProfile()
         {
-            CreateMap<User, AllUserDto>();
-            CreateMap<AllUserDto, User>();
+            CreateMap<User, UserDto>();
+            CreateMap<UserDto, User>();
         }
     }
 }
