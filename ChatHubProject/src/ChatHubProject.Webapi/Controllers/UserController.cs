@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -77,19 +78,37 @@ namespace ChatHubProject.Webapi.Controllers
 
                 var role = Userrole.Pupil.ToString();
                 var tokenHandler = new JwtSecurityTokenHandler();
+                var claims = new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Username.ToString()),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
+                };
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name, user.Username.ToString()),
-                        new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
-                    }),
+                    Subject = new ClaimsIdentity(claims),
                     Expires = DateTime.UtcNow + lifetime,
                     SigningCredentials = new SigningCredentials(
                         new SymmetricSecurityKey(secret),
                         SecurityAlgorithms.HmacSha256Signature)
+
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
+                var cookie = new ClaimsIdentity
+                (
+                    claims,
+                    Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme
+                );
+                var authProperties = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(3),
+                };
+                await HttpContext.SignInAsync
+                (
+                    Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(cookie),
+                    authProperties
+                );
                 return Ok(new
                 {
                     user.Username,
@@ -128,21 +147,38 @@ namespace ChatHubProject.Webapi.Controllers
                     (_, _) => AdUserRole.Administration.ToString()
                 };
                 var tokenHandler = new JwtSecurityTokenHandler();
+                var claims = new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, currentUser.Cn),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+                    new Claim("Group", group)
+                };
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     // Payload for our JWT.
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name, currentUser.Cn),
-                        new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
-                        new Claim("Group", group)
-                    }),
+                    Subject = new ClaimsIdentity(claims),
                     Expires = DateTime.UtcNow + lifetime,
                     SigningCredentials = new SigningCredentials(
                         new SymmetricSecurityKey(secret),
                         SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
+                var cookie = new ClaimsIdentity
+                (
+                    claims,
+                    Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme
+                );
+                var authProperties = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(3),
+                };
+                await HttpContext.SignInAsync
+                (
+                    Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(cookie),
+                    authProperties
+                );
                 return Ok(new
                 {
                     Username = currentUser.Cn,
