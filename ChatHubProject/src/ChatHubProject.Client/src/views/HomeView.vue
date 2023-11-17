@@ -1,8 +1,9 @@
 <script setup>
+import UserProfileIcon from "../components/UserIcon.vue"
 </script>
 
 <template>
-  <h1> Homepage in progress ❤️😍❤️</h1>
+  <UserProfileIcon/>
 </template>
 
 <script>
@@ -16,11 +17,5 @@ export default {
 	margin: 0;
 	padding: 0;
   box-sizing: border-box;
-}
-h1 {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 </style>
