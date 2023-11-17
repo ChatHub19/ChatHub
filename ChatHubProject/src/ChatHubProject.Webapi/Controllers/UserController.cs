@@ -2,6 +2,7 @@
 using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using ChatHubProject.Application.Model;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -213,6 +214,30 @@ namespace ChatHubProject.Webapi.Controllers
             _mapper.Map(userDto, user);
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
+            return NoContent();
+        }
+
+        /// <summary>
+        /// We cannot access the cookie in JavaScript. To check the auth state, we can send a request
+        /// to /api/user/userinfo. So we can set our application state.
+        /// </summary>
+        [Authorize]
+        [HttpGet("userinfo")]
+        public IActionResult GetUserInfo()
+        {
+            var authenticated = HttpContext.User.Identity?.IsAuthenticated ?? false;
+            if (!authenticated) { return Unauthorized(); }
+            return Ok(new
+            {
+                Username = HttpContext.User.Identity?.Name,
+                IsAdmin = HttpContext.User.IsInRole("Administration"),
+            });
+        }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
             return NoContent();
         }
     }
