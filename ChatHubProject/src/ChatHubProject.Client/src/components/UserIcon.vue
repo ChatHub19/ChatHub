@@ -6,10 +6,14 @@ import ProfileAvatar from "vue-profile-avatar";
   <div class="wrapper">
     <div class="avatar">
       <ProfileAvatar :username = "username" size = "m" @click="showOption"/> 
-      <div class="option"> Profil </div>
-      <div class="option"> Profil </div>
-      <div class="option"> Profil </div>
-      <div class="option"> Profil </div>
+      <div id="userinfo">
+        <span> {{ username }} </span>
+        <span> Offline </span>
+      </div>
+      <div class="option"> <font-awesome-icon icon="fa-solid fa-gear" /> </div>
+      <div class="option"> icon </div>
+      <div class="option"> icon </div>
+      <div class="option"> icon </div>
     </div>
   </div>
 </template>
@@ -40,13 +44,16 @@ export default {
 }
 .wrapper {
   height: 100vh;
-  width: 100vw;
+  max-width: 100vw;
 }
 .avatar {
   display: flex;
-  justify-content: center;
-  flex-direction: column;
-  height: 100vh;
+  align-items: center;
+  border: 2px solid black;
+  margin-top: 10px;
+  width: fit-content;
+  padding: .25rem;
+  background: lightslategrey;
 }
 .option {
   display: flex;
@@ -54,9 +61,17 @@ export default {
   align-items: center;
   border: 2px solid black;
   border-radius: 20px;
-  width: 200px;
+  width: 3rem;
   height: 3rem;
+  margin: 5px;
   background: lightgrey;
-  margin-left: 100px;
+}
+#userinfo {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+span {
+  margin-left: 10px;
 }
 </style>
