@@ -5,15 +5,14 @@ import ProfileAvatar from "vue-profile-avatar";
 <template>
   <div class="wrapper">
     <div class="avatar">
-      <ProfileAvatar :username = "username" size = "m" @click="showOption"/> 
+      <ProfileAvatar :username="username" size="m" colorType="pastel"/> 
       <div id="userinfo">
         <span> {{ username }} </span>
         <span> Offline </span>
       </div>
-      <div class="option"> <font-awesome-icon icon="fa-solid fa-gear" /> </div>
-      <div class="option"> icon </div>
-      <div class="option"> icon </div>
-      <div class="option"> icon </div>
+      <router-link id="redirect-btn" to="/custom"> 
+        <div class="option"> <font-awesome-icon icon="fa-solid fa-gear" /> </div> 
+      </router-link> 
     </div>
   </div>
 </template>
@@ -53,7 +52,7 @@ export default {
   margin-top: 10px;
   width: fit-content;
   padding: .25rem;
-  background: lightslategrey;
+  background: grey;
 }
 .option {
   display: flex;
@@ -65,6 +64,13 @@ export default {
   height: 3rem;
   margin: 5px;
   background: lightgrey;
+}
+.option:hover {
+  background: rgba(211, 211, 211, 0.578);
+}
+#redirect-btn {
+  text-decoration: none;
+  color: black;
 }
 #userinfo {
   display: flex;
