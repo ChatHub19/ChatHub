@@ -16,10 +16,6 @@ import AccountInfo from "../components/AcountInfo.vue"
       <div class="custom-option">
         <AccountInfo/>
       </div>
-      <span class="custom-option"> smt</span>
-      <span class="custom-option"> smt</span>
-      <span class="custom-option"> smt</span>
-      <span class="custom-option"> smt</span>
     </section>
   </div>
 </template>
