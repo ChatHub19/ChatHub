@@ -1,4 +1,5 @@
 <script setup>
+import axios from "axios";
 </script>
 
 <template>
@@ -22,13 +23,39 @@
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      message: "",
+    };
+  },
+  async mounted() {
+    try {
+      this.categories = (await axios.get("message")).data;
+    } catch (e) {
+      alert("Fehler beim Laden der Messages.");
+    }
+  },
+  methods: {
+    async SendMessage() {
+      try {
+        const userdata = (await axios.post("message/send", message)).data;
+      } catch (e) {
+        if (e.response.status == 500) {
+          toast.error("Error");
+        }
+      }
+    },
+  },
+  
+
+
+};
 </script>
 <style>
-input{
-width: 50%;
-background: var(--theme-middle);
-color: white;
+input {
+  width: 50%;
+  background: var(--theme-middle);
+  color: white;
 }
-
-
 </style>

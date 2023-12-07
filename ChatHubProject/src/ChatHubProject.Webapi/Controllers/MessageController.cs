@@ -55,7 +55,7 @@ namespace ChatHubProject.Webapi.Controllers
         /// Creates a new message in the database. Validation of the dto class is performed
         /// automatically by ASP.NET Core, so you have to implement this in your dto class!
         /// </summary>
-        [HttpPost]
+        [HttpPost("send")]
         public IActionResult SendMessage(MessageDto messageDto)
         {
             // After mapping we have to resolve the foreign key guids.
