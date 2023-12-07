@@ -1,5 +1,5 @@
 <script setup>
-import axios from 'axios';
+import axios from "axios";
 </script>
 
 <template>
@@ -24,46 +24,40 @@ import axios from 'axios';
 </template>
 
 <script>
-
 export default {
-  data(){
+  data() {
     return {
-      message:''
-    }
+      message: "",
+    };
   },
   async mounted() {
-        try {
-            this.categories = (await axios.get('message')).data;
-        } catch (e) {
-            alert('Fehler beim Laden der Messages.');
-        }
-    },
-    methods: {
-      async SendMessage() {
-        alert("Sending...")
-        try {
-				const userdata = (await axios.post('message/send', message)).data;
-        axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
-        this.$store.commit('authenticate', userdata);    
-        this.$router.push("/");
-			} catch (e) {
-				if (e.response.status == 500) {
+    try {
+      this.categories = (await axios.get("message")).data;
+    } catch (e) {
+      alert("Fehler beim Laden der Messages.");
+    }
+  },
+  methods: {
+    async SendMessage() {
+      try {
+        const userdata = (await axios.post("message/send", message)).data;
+      } catch (e) {
+        if (e.response.status == 500) {
           toast.error("Error");
         }
       }
-      }
+    },
+  },
+  
 
 
-    }
-}
+};
 </script>
 
 <style>
-input{
-width: 50%;
-background: var(--theme-middle);
-color: white;
+input {
+  width: 50%;
+  background: var(--theme-middle);
+  color: white;
 }
-
-
 </style>
