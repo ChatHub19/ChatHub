@@ -22,7 +22,7 @@ import 'vue3-toastify/dist/index.css';
 				</div>
 				<button type="submit" class="button"> Register </button>
 				<span> Have an account? </span> 
-				<router-link id="register-btn" to="/"> Login </router-link> 
+				<router-link id="register-btn" to="/login"> Login </router-link> 
 			</form>			
 		</div>
 	</div>
@@ -45,7 +45,6 @@ export default {
 				const userdata = (await axios.post('user/register', this.registerModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);   
-				alert("vely gud")  
         this.$router.push("/");
 			} catch (e) {
 				if (e.response.status == 401) {
