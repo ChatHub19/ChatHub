@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,13 +38,34 @@ builder.Services.AddDbContext<ChatHubContext>(opt =>
 
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.OnAppendCookie = cookieContext =>
+    {
+        cookieContext.CookieOptions.Secure = true;
+        cookieContext.CookieOptions.SameSite = builder.Environment.IsDevelopment() ? SameSiteMode.None : SameSiteMode.Strict;
+    };
+});
+// Configure cookie. By default ASP sends a redirect to the login page. This makes no sense with a SPA,
+// so we send 401 if we try to request a protected route.
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(o =>
+    {
+        o.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return System.Threading.Tasks.Task.CompletedTask;
+        };
+    });
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Der Vue.JS Devserver läuft auf einem anderen Port, deswegen brauchen wir diese Konfiguration
+// Der Vue.JS Devserver lÃ¤uft auf einem anderen Port, deswegen brauchen wir diese Konfiguration
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
-        options.AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+        options.AddPolicy("AllowVueDevserver",
+        builder => builder.SetIsOriginAllowed(origin => new System.Uri(origin).IsLoopback)
+            .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 }
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -56,6 +79,11 @@ using (var scope = app.Services.CreateScope())
     {
         await db.CreateDatabase(isDevelopment: app.Environment.IsDevelopment());
     }
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("AllowVueDevserver");
 }
 
 app.UseHttpsRedirection();
@@ -74,6 +102,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Wichtig für das clientseitige Routing, damit wir direkt an eine URL in der Client App steuern können.
+// Wichtig fÃ¼r das clientseitige Routing, damit wir direkt an eine URL in der Client App steuern kÃ¶nnen.
 app.MapFallbackToFile("index.html");
 app.Run();
