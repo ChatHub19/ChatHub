@@ -12,7 +12,7 @@
       </div>
       <div v-if="!accountModel.checkedPassword">
         <h6> Password </h6> 
-        <input type="password" :placeholder="password" @keyup.enter="checkPassword()">
+        <input type="password" :placeholder="password" v-model="accountModel.password" @keyup.enter="checkPassword()">
       </div>
       <div v-else> 
         <h6> New Password </h6> 
@@ -36,7 +36,7 @@ export default {
   computed: {
     username() {
       return this.$store.state.user.username;
-    },
+    }
   },
   data() {
     return {
