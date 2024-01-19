@@ -1,5 +1,5 @@
 <script setup>
-
+import axios from "axios";
 </script>
 
 <template>
@@ -33,9 +33,21 @@
 
 <script>
 export default {
+  async mounted() {
+    await this.getUser();
+  },
   computed: {
-    username() {
-      return this.$store.state.user.username;
+    guid() {
+      return this.$store.state.user.guid;
+    },
+    async username() {
+      return (await axios.get(`/user/${this.guid}`)).data.username;
+    },
+    async password() {
+      return (await axios.get(`/user/${this.guid}`)).data.password;
+    },
+    async email() {
+      return (await axios.get(`/user/${this.guid}`)).data.email;
     }
   },
   data() {
@@ -51,6 +63,15 @@ export default {
     }
   },
   methods: {
+    async getUser() { // Can it retrieve data?
+      try { return (await axios.get(`/user/${this.guid}`)).data }
+      catch(e) { console.log("Error loading API") }
+    },
+    async getPassword() {
+      var password = (await axios.get(`/user/${this.guid}`)).data.password
+      this.accountModel.password = password
+      return password
+    },
     checkPassword() {
       this.accountModel.checkedPassword = true;
     },

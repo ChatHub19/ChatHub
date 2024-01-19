@@ -50,6 +50,7 @@ namespace ChatHubProject.Webapi.Controllers
             {
                 a.Guid,
                 a.Username,
+                a.Password,
                 a.Email,
                 a.Role,
                 a.Group,
