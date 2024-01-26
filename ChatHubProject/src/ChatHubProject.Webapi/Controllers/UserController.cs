@@ -35,7 +35,7 @@ namespace ChatHubProject.Webapi.Controllers
         /// <returns></returns>
         [Authorize(Roles = "Administration")]
         [HttpGet]
-        public Task<IActionResult> GetAllUser() => GetAll<UserDto>();
+        public async Task<IActionResult> GetAllUser() => await GetAll<UserDto>();
 
         /// <summary>
         /// GET /api/user/guid
@@ -44,9 +44,9 @@ namespace ChatHubProject.Webapi.Controllers
         /// <returns></returns>
         [Authorize(Roles = "Administration")]
         [HttpGet("{guid}")]
-        public Task<IActionResult> GetUser(Guid guid)
+        public async Task<IActionResult> GetUser(Guid guid)
         {
-            return GetByGuid(guid, a => new
+            return await GetByGuid(guid, a => new
             {
                 a.Guid,
                 a.Username,
