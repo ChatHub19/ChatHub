@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'   
+import { createStore } from "vuex";
 
 export default createStore({
   state() {
@@ -8,8 +8,8 @@ export default createStore({
         guid: "",
         role: "",
         isLoggedIn: false,
-      }
-    }
+      },
+    };
   },
   mutations: {
     authenticate(state, userdata) {
@@ -22,5 +22,5 @@ export default createStore({
       state.user.role = userdata.role;
       state.user.isLoggedIn = true;
     },
-  }
+  },
 });
