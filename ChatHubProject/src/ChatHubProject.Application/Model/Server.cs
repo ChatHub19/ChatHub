@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +13,11 @@ namespace ChatHubProject.Application.Model
         protected Server() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        public Server(string name, User creator, int maxCapacity, string? description = null)
+        public Server(string name, User creator)
         {
             Name = name;
+            // Icon = icon;
             User = creator;
-            MaxCapacity = maxCapacity;
-            Description = description;
         }
 
         public int Id { get; set; }
@@ -26,10 +26,9 @@ namespace ChatHubProject.Application.Model
 
         public string Name { get; set; }
 
+        // public File Icon { get; set; }
+
         public User User { get; set; }
 
-        public int MaxCapacity { get; set; }
-
-        public string? Description { get; set; }
     }
 }
