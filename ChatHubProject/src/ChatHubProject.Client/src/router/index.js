@@ -38,11 +38,7 @@ router.beforeEach((to, from, next) => {
     next("/login");
     return;
   }
-// If the user wants to switch to another list while remaining on the current list, the tasks won't be refreshed.
-// This code is responsible for refreshing the tasks.
-  if (from.params.listguid !== undefined && to.params.listguid !== from.params.listguid) {
-    store.commit('getTask', store.state.user.userTasks);
-  }
+
   next();
   return;
 });

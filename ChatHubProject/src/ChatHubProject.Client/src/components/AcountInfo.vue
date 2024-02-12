@@ -1,5 +1,6 @@
 <script setup>
 import axios from "axios";
+import store from '../store.js'
 </script>
 
 <template>
@@ -49,6 +50,7 @@ import axios from "axios";
 <script>
 export default {
   async mounted() {
+    await this.getUserdata();
     await this.getUsername();
     await this.getPassword();
     await this.getEmail();
@@ -80,6 +82,10 @@ export default {
     }
   },
   methods: {
+    async getUserdata() {
+      var userdata = (await axios.get("user/userinfo")).data
+      store.commit("authenticate", userdata);
+    },
     async getUsername() {
       this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
     },
@@ -113,7 +119,6 @@ export default {
       this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
     },
     getEmptyPasswordValue() {
-      console.log(this.accountModel.password)
       this.accountModel.password = "";
     },
     async getPasswordValue() {

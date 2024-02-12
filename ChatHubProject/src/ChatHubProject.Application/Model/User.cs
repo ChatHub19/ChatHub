@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace ChatHubProject.Application.Model
 {
     [Index(nameof(Email), IsUnique = true)]
+    [Index(nameof(Username), IsUnique = true)]
     public class User : IEntity<int>
     {
 

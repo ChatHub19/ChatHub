@@ -43,10 +43,11 @@ export default {
 		async register() {
 			try {
 				const userdata = (await axios.post('user/register', this.registerModel)).data;
-        axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
+				axios.defaults.withCredentials = true;
         this.$store.commit('authenticate', userdata);   
         this.$router.push("/");
-			} catch (e) {
+			} 
+			catch (e) {
 				if (e.response.status == 401) {
           toast.error("Login failed! Invalid credentials!");
         }

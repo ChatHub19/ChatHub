@@ -39,10 +39,10 @@ export default {
 		async login() {
 			try {
 				const userdata = (await axios.post('user/login', this.loginModel)).data;
-        axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);    
         this.$router.push("/");
-			} catch (e) {
+			} 
+			catch (e) {
 				if (e.response.status == 500) {
           toast.error("Login failed! User does not exist!");
         }
