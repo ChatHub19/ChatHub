@@ -2,6 +2,7 @@
 using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using ChatHubProject.Application.Model;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -33,7 +36,7 @@ namespace ChatHubProject.Webapi.Controllers
         /// <returns></returns>
         [Authorize(Roles = "Administration")]
         [HttpGet]
-        public Task<IActionResult> GetAllUser() => GetAll<UserDto>();
+        public async Task<IActionResult> GetAllUser() => await GetAll<UserDto>();
 
         /// <summary>
         /// GET /api/user/guid
@@ -42,12 +45,13 @@ namespace ChatHubProject.Webapi.Controllers
         /// <returns></returns>
         [Authorize(Roles = "Administration")]
         [HttpGet("{guid}")]
-        public Task<IActionResult> GetUser(Guid guid)
+        public async Task<IActionResult> GetUser(Guid guid)
         {
-            return GetByGuid(guid, a => new
+            return await GetByGuid(guid, a => new
             {
                 a.Guid,
                 a.Username,
+                a.Password,
                 a.Email,
                 a.Role,
                 a.Group,
@@ -63,43 +67,47 @@ namespace ChatHubProject.Webapi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginSPG([FromBody] LoginDto credentials)
         {
-            var secret = Convert.FromBase64String(_config["Secret"]);
-            var lifetime = TimeSpan.FromHours(3);
-            var searchuser = _config["Searchuser"];
-            var searchpass = _config["Searchpass"];
-            var localAdmins = _config["LocalAdmins"].Split(",");
-
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.Username);
             if (user is not null) 
             {
                 if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
 
                 var role = Userrole.Pupil.ToString();
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenDescriptor = new SecurityTokenDescriptor
+                var claims = new List<Claim>
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name, user.Username.ToString()),
-                        new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
-                    }),
-                    Expires = DateTime.UtcNow + lifetime,
-                    SigningCredentials = new SigningCredentials(
-                        new SymmetricSecurityKey(secret),
-                        SecurityAlgorithms.HmacSha256Signature)
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
                 };
-                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var claimsidentity = new ClaimsIdentity
+                (
+                    claims,
+                    Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme
+                );
+                var authProperties = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(3),
+                };
+                await HttpContext.SignInAsync
+                (
+                    Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsidentity),
+                    authProperties
+                );
                 return Ok(new
                 {
                     user.Username,
                     Role = role,
                     UserGuid = user.Guid,
                     user.Group,
-                    Token = tokenHandler.WriteToken(token)
                 });
             }
             else
             {
+                var searchuser = _config["Searchuser"];
+                var searchpass = _config["Searchpass"];
+                var localAdmins = _config["LocalAdmins"].Split(",");
+
                 using var service = _isDevelopment && !string.IsNullOrEmpty(searchuser)
                     ? AdService.Login(searchuser, searchpass, credentials.Username)
                     : AdService.Login(credentials.Username, credentials.Password);
@@ -126,29 +134,33 @@ namespace ChatHubProject.Webapi.Controllers
                     (AdUserRole.Management, _) => AdUserRole.Teacher.ToString(),
                     (_, _) => AdUserRole.Administration.ToString()
                 };
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenDescriptor = new SecurityTokenDescriptor
+                var claims = new List<Claim>
                 {
-                    // Payload for our JWT.
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name, currentUser.Cn),
-                        new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
-                        new Claim("Group", group)
-                    }),
-                    Expires = DateTime.UtcNow + lifetime,
-                    SigningCredentials = new SigningCredentials(
-                        new SymmetricSecurityKey(secret),
-                        SecurityAlgorithms.HmacSha256Signature)
+                    new Claim(ClaimTypes.Name, currentUser.Cn),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
                 };
-                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var claimsidentity = new ClaimsIdentity
+                (
+                    claims,
+                    Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme
+                );
+                var authProperties = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(3),
+                };
+                await HttpContext.SignInAsync
+                (
+                    Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsidentity),
+                    authProperties
+                );
                 return Ok(new
                 {
                     Username = currentUser.Cn,
                     UserGuid = user.Guid,
                     Role = role,
                     Group = group,
-                    Token = tokenHandler.WriteToken(token)
                 });
             }
         }
@@ -161,16 +173,39 @@ namespace ChatHubProject.Webapi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto credentials)
         {
+            var role = Userrole.Pupil.ToString();
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.Email);
             if (user is null)
-            {
-                user = new User(credentials.Username, credentials.Password, credentials.Email, Userrole.Pupil.ToString());
+            {   
+                user = new User(credentials.Username, credentials.Password, credentials.Email, role);
                 await _db.Users.AddAsync(user);
                 try { await _db.SaveChangesAsync(); }
                 catch (DbUpdateException) { return BadRequest(); }
             }
             else { return BadRequest("User is already in the database."); }
             if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Username.ToString()),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+            };
+            var claimsidentity = new ClaimsIdentity
+            (
+                claims,
+                Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme
+            );
+            var authProperties = new AuthenticationProperties
+            {
+                AllowRefresh = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(3),
+            };
+            await HttpContext.SignInAsync
+            (
+                Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsidentity),
+                authProperties
+            );
             return Ok(new
             {
                 user.Username,
@@ -213,6 +248,35 @@ namespace ChatHubProject.Webapi.Controllers
             _mapper.Map(userDto, user);
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
+            return NoContent();
+        }
+
+        /// <summary>
+        /// We cannot access the cookie in JavaScript. To check the auth state, we can send a request
+        /// to /api/user/userinfo. So we can set our application state.
+        /// </summary>
+        [Authorize]
+        [HttpGet("userinfo")]
+        public async Task<IActionResult> GetUserInfoAsync()
+        {
+            var authenticated = HttpContext.User.Identity?.IsAuthenticated ?? false;
+            if (!authenticated) { return Unauthorized(); }
+            var username = HttpContext.User.Identity?.Name;
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == username);
+            if(user is null) { return Unauthorized(); }
+            return Ok(new
+            {
+                user.Username,
+                userGuid = user.Guid,
+                user.Email,
+                user.Role,
+            });
+        }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
             return NoContent();
         }
     }

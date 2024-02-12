@@ -55,7 +55,7 @@ namespace ChatHubProject.Application.Infrastructure
             {
                 new User(
                     username: "admin",
-                    password: "Password1234!",
+                    password: "1234",
                     email: "admin@gmail.com",
                     role: Userrole.Administration.ToString()),
                 new User(

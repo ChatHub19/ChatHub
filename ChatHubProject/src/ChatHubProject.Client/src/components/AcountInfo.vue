@@ -1,5 +1,6 @@
 <script setup>
-
+import axios from "axios";
+import store from '../store.js'
 </script>
 
 <template>
@@ -8,11 +9,21 @@
     <section>
       <div>
         <h6> Username </h6> 
-        <input type="text" :placeholder="username" v-model="accountModel.username">
+        <input 
+          type="text" :placeholder="username" v-model="accountModel.username" 
+          @focus="getEmptyUsernameValue()" 
+          @blur="getUsernameValue()"
+          @keyup.enter="setUsername()"
+        >
       </div>
       <div v-if="!accountModel.checkedPassword">
         <h6> Password </h6> 
-        <input type="password" :placeholder="password" v-model="accountModel.password" @keyup.enter="checkPassword()">
+        <input 
+          type="password" :value="password"
+          @focus="getEmptyPasswordValue()" 
+          @blur="getPasswordValue()"
+          @keyup.enter="checkPassword()"
+        >
       </div>
       <div v-else> 
         <h6> New Password </h6> 
@@ -22,7 +33,12 @@
       </div>
       <div>
         <h6> Email </h6> 
-        <input type="email" :placeholder="email" v-model="accountModel.email">
+        <input 
+          type="email" :placeholder="email" v-model="accountModel.email"
+          @focus="getEmptyEmailValue()" 
+          @blur="getEmailValue()"
+          @keyup.enter="setEmail()"
+        >
       </div>
       <div id="delete">
         <button class="button" @click="deleteAccount()"> Delete Account </button>
@@ -33,9 +49,24 @@
 
 <script>
 export default {
+  async mounted() {
+    await this.getUserdata();
+    await this.getUsername();
+    await this.getPassword();
+    await this.getEmail();
+  },
   computed: {
-    username() {
-      return this.$store.state.user.username;
+    guid() {
+      return this.$store.state.user.guid;
+    },
+    username() { 
+      return "";
+    },
+    password() {
+      return "123456789";
+    },
+    email() {
+      return "";
     }
   },
   data() {
@@ -51,6 +82,28 @@ export default {
     }
   },
   methods: {
+    async getUserdata() {
+      var userdata = (await axios.get("user/userinfo")).data
+      store.commit("authenticate", userdata);
+    },
+    async getUsername() {
+      this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
+    },
+    async getPassword() {
+      this.accountModel.password = (await axios.get(`/user/${this.guid}`)).data.password
+    },
+    async getEmail() {
+      this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email
+    },
+    async setUsername() {
+      (await axios.put(`/user/${this.guid}`)).data.username
+    },
+    async setPassword() {
+      (await axios.put(`/user/${this.guid}`)).data.password
+    },
+    async setEmail() {
+      (await axios.put(`/user/${this.guid}`)).data.email
+    },
     checkPassword() {
       this.accountModel.checkedPassword = true;
     },
@@ -58,6 +111,24 @@ export default {
       this.accountModel.newpassword = "";
       this.accountModel.confirmpassword = "";
       this.accountModel.checkedPassword = false;
+    },
+    getEmptyUsernameValue() {
+      this.accountModel.username = "";
+    },
+    async getUsernameValue() {
+      this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
+    },
+    getEmptyPasswordValue() {
+      this.accountModel.password = "";
+    },
+    async getPasswordValue() {
+      this.accountModel.password = (await axios.get(`/user/${this.guid}`)).data.password
+    },
+    getEmptyEmailValue() {
+      this.accountModel.email = "";
+    },
+    async getEmailValue() {
+      this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email
     },
     deleteAccount() {
       alert("Delete");
