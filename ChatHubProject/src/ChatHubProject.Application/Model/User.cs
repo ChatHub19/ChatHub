@@ -15,9 +15,10 @@ namespace ChatHubProject.Application.Model
         protected User() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        public User(string username, string password, string email, string role, string? group = "No Group")
+        public User(string username, string displayname, string password, string email, string role, string? group = "No Group")
         {
             Username = username;
+            Displayname = displayname;
             SetPassword(password);
             Email = email;
             Role = role;
@@ -29,6 +30,7 @@ namespace ChatHubProject.Application.Model
         public int Id { get; set; }
         public Guid Guid { get; set; }
         public string Username { get; set; }
+        public string Displayname { get; set; }
         public string? Password { get; set; }
         public string Salt { get; set; }
         public string PasswordHash { get; set; }

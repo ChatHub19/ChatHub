@@ -1,6 +1,7 @@
 <script setup>
 import axios from "axios";
 import store from '../store.js'
+import PasswordButton from "../components/PasswordButton.vue"
 </script>
 
 <template>
@@ -16,20 +17,14 @@ import store from '../store.js'
           @keyup.enter="setUsername()"
         >
       </div>
-      <div v-if="!accountModel.checkedPassword">
-        <h6> Password </h6> 
+      <div>
+        <h6> Display name </h6> 
         <input 
-          type="password" :value="password"
-          @focus="getEmptyPasswordValue()" 
-          @blur="getPasswordValue()"
-          @keyup.enter="checkPassword()"
+          type="text" :placeholder="displayname" v-model="accountModel.displayname" 
+          @focus="getEmptyUsernameValue()" 
+          @blur="getUsernameValue()"
+          @keyup.enter="setUsername()"
         >
-      </div>
-      <div v-else> 
-        <h6> New Password </h6> 
-        <input type="password" v-model="accountModel.newpassword">
-        <h6> Confirm Password </h6> 
-        <input type="password" v-model="accountModel.confirmpassword" @keyup.enter="confirmPassword()">
       </div>
       <div>
         <h6> Email </h6> 
@@ -39,6 +34,10 @@ import store from '../store.js'
           @blur="getEmailValue()"
           @keyup.enter="setEmail()"
         >
+      </div>
+      <div id="password">
+        <h6> Password </h6> 
+        <PasswordButton/>
       </div>
       <div id="delete">
         <button class="button" @click="deleteAccount()"> Delete Account </button>
@@ -52,7 +51,7 @@ export default {
   async mounted() {
     await this.getUserdata();
     await this.getUsername();
-    await this.getPassword();
+    await this.getDisplayname();
     await this.getEmail();
   },
   computed: {
@@ -62,8 +61,8 @@ export default {
     username() { 
       return "";
     },
-    password() {
-      return "123456789";
+    displayname() { 
+      return "";
     },
     email() {
       return "";
@@ -73,10 +72,7 @@ export default {
     return {
       accountModel: {
         username: "",
-        password: "",
-        newpassword: "",
-        confirmpassword: "",
-        checkedPassword: false,
+        displayname: "",
         email: "",
       }
     }
@@ -89,14 +85,14 @@ export default {
     async getUsername() {
       this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
     },
-    async getPassword() {
-      this.accountModel.password = (await axios.get(`/user/${this.guid}`)).data.password
+    async getDisplayname() {
+      this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
     async getEmail() {
       this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email
     },
     async setUsername() {
-      (await axios.put(`/user/${this.guid}`)).data.username
+      await axios.put(`/user/${this.guid}`, this.accountModel).data
     },
     async setPassword() {
       (await axios.put(`/user/${this.guid}`)).data.password
@@ -117,6 +113,12 @@ export default {
     },
     async getUsernameValue() {
       this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
+    },
+    getEmptyDisplaynameValue() {
+      this.accountModel.displayname = "";
+    },
+    async getDisplaynameValue() {
+      this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
     getEmptyPasswordValue() {
       this.accountModel.password = "";
@@ -166,7 +168,10 @@ h6 {
 button {
   background: red;
 }
-#delete {
+#password {
+  margin: 2rem 0  ;
+}
+delete {
   margin: 5rem 0;
 }
 </style>

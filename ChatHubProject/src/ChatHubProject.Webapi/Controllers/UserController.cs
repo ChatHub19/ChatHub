@@ -47,14 +47,15 @@ namespace ChatHubProject.Webapi.Controllers
         [HttpGet("{guid}")]
         public async Task<IActionResult> GetUser(Guid guid)
         {
-            return await GetByGuid(guid, a => new
+            return await GetByGuid(guid, u => new
             {
-                a.Guid,
-                a.Username,
-                a.Password,
-                a.Email,
-                a.Role,
-                a.Group,
+                u.Guid,
+                u.Username,
+                u.Displayname,
+                u.Password,
+                u.Email,
+                u.Role,
+                u.Group,
             });
         }
 
@@ -116,7 +117,7 @@ namespace ChatHubProject.Webapi.Controllers
 
                 if (user is null)
                 {
-                    user = new User(credentials.Username, credentials.Password, $"{credentials.Username}@spengergasse.at", Userrole.Pupil.ToString());
+                    user = new User(credentials.Username, credentials.Username, credentials.Password, $"{credentials.Username}@spengergasse.at", Userrole.Pupil.ToString());
                     await _db.Users.AddAsync(user);
                     try { await _db.SaveChangesAsync(); }
                     catch (DbUpdateException) { return BadRequest(); }
@@ -177,7 +178,7 @@ namespace ChatHubProject.Webapi.Controllers
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.Email);
             if (user is null)
             {   
-                user = new User(credentials.Username, credentials.Password, credentials.Email, role);
+                user = new User(credentials.Username, credentials.Username, credentials.Password, credentials.Email, role);
                 await _db.Users.AddAsync(user);
                 try { await _db.SaveChangesAsync(); }
                 catch (DbUpdateException) { return BadRequest(); }
@@ -267,6 +268,7 @@ namespace ChatHubProject.Webapi.Controllers
             return Ok(new
             {
                 user.Username,
+                user.Displayname,
                 userGuid = user.Guid,
                 user.Email,
                 user.Role,

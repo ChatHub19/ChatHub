@@ -55,12 +55,14 @@ namespace ChatHubProject.Application.Infrastructure
             {
                 new User(
                     username: "admin",
+                    displayname: "admin",
                     password: "1234",
                     email: "admin@gmail.com",
                     role: Userrole.Administration.ToString()),
                 new User(
                     username: "pupil",
-                    password: "Password1234!",
+                    displayname: "pupil",
+                    password: "1234",
                     email: "user@gmail.com",
                     role: Userrole.Pupil.ToString()),
             };
@@ -78,6 +80,7 @@ namespace ChatHubProject.Application.Infrastructure
                 var username = f.Name.FirstName();
                 return new User(
                     username: username.ToLower(),
+                    displayname: username.ToLower(),
                     password: "111",
                     email: $"{username.ToLower()}@gmail.com",
                     role: f.PickRandom<Userrole>().ToString())
