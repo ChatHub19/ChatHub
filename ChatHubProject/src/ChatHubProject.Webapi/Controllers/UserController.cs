@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ChatHubProject.Application.Commands;
 using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using ChatHubProject.Application.Model;
@@ -241,12 +242,14 @@ namespace ChatHubProject.Webapi.Controllers
         /// <param name="userDto"></param>
         /// <returns></returns>
         [HttpPut("{guid:Guid}")]
-        public async Task<IActionResult> EditUser(Guid guid, UserDto userDto)
+        public async Task<IActionResult> EditUser(Guid guid, [FromBody] EditUserCmd editusercmd)
         {
-            if (guid != userDto.Guid) { return BadRequest(); }
+            // if (guid != editusercmd.Guid) { return Unauthorized(); }
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
             if (user is null) { return NotFound(); }
-            _mapper.Map(userDto, user);
+            user.Username = editusercmd.Username;
+            user.Displayname = editusercmd.Displayname;
+            user.Email = editusercmd.Email;
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
             return NoContent();

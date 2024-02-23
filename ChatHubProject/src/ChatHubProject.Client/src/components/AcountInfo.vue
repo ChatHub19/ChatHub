@@ -92,7 +92,8 @@ export default {
       this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email
     },
     async setUsername() {
-      await axios.put(`/user/${this.guid}`, this.accountModel).data
+      console.log(await axios.put(`/user/${this.guid}`, this.accountModel))
+      await axios.put(`/user/${this.guid}`, this.accountModel)
     },
     async setPassword() {
       (await axios.put(`/user/${this.guid}`)).data.password
