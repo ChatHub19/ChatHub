@@ -1,19 +1,42 @@
 <template>
   <div>
-    <button
-      @focus="getEmptyUsernameValue()" 
-      @blur="getUsernameValue()"
-      @keyup.enter="setUsername()"
-    > 
+    <button @click="openModal()" @keyup.enter="openModal()"> 
       Change Password
     </button>
+    <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal()">&times;</span>
+        <h6> Password </h6> 
+        <input type="password" :placeholder="password" v-model="accountModel.password">
+        <h6> New Password </h6> 
+        <input type="password" :placeholder="password" v-model="accountModel.newpassword">
+        <h6> Confirm New Password </h6> 
+        <input type="password" :placeholder="password" v-model="accountModel.confirmnewpasswordpassword">
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-
-
+  data() {
+    return {
+      showModal: false,
+      accountModel: {
+        password: "",
+        newpassword: "",
+        confirmnewpassword: "",
+      }
+    };
+  },
+  methods: {
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    }
+  }
 }
 </script>
 
@@ -23,16 +46,46 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-button {
-  width: 50%;
+h6 {
+  margin: 10px 0;
+}
+input, button {
   padding: .5rem;
   border: 1px solid transparent;
   border-radius: 5px;
   color: white;
+}
+button {
+  width: 50%;
   background: linear-gradient(
 		to bottom right,
 		var(--lightblue), 
 		var(--lightpurple)
 	);
+}
+input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.374);
+}
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.374);
+  overflow: auto;
+  z-index: 1;
+}
+.modal-content {
+  margin: 0 30em;
+  background: #36393f;
+  padding: 20px;
+}
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
 }
 </style>

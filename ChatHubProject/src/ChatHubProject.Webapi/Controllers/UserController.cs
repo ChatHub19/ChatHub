@@ -61,6 +61,36 @@ namespace ChatHubProject.Webapi.Controllers
         }
 
         /// <summary>
+        /// We cannot access the cookie in JavaScript. To check the auth state, we can send a request
+        /// to /api/user/userinfo. So we can set our application state.
+        /// </summary>
+        [Authorize]
+        [HttpGet("userinfo")]
+        public async Task<IActionResult> GetUserInfoAsync()
+        {
+            var authenticated = HttpContext.User.Identity?.IsAuthenticated ?? false;
+            if (!authenticated) { return Unauthorized(); }
+            var username = HttpContext.User.Identity?.Name;
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == username);
+            if (user is null) { return Unauthorized(); }
+            return Ok(new
+            {
+                user.Username,
+                user.Displayname,
+                userGuid = user.Guid,
+                user.Email,
+                user.Role,
+            });
+        }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return NoContent();
+        }
+
+        /// <summary>
         /// POST /api/user/loginspg
         /// Login using either student or self-made account
         /// </summary>
@@ -167,11 +197,6 @@ namespace ChatHubProject.Webapi.Controllers
             }
         }
 
-        /// <summary>
-        /// POST /api/user/register
-        /// </summary>
-        /// <param name="credentials"></param>
-        /// <returns></returns>
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto credentials)
         {
@@ -217,12 +242,6 @@ namespace ChatHubProject.Webapi.Controllers
             });
         }
 
-        /// <summary>
-        /// DELETE Request /api/user/guid with JSON body
-        /// Deletes a user in the database.
-        /// </summary>
-        /// <param name="guid"></param>
-        /// <returns></returns>
         [HttpDelete("{guid:Guid}")]
         public async Task<IActionResult> DeleteUser(Guid guid)
         {
@@ -234,54 +253,38 @@ namespace ChatHubProject.Webapi.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// PUT Request /api/user/guid with JSON body
-        /// Updates a user in the database. 
-        /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="userDto"></param>
-        /// <returns></returns>
-        [HttpPut("{guid:Guid}")]
-        public async Task<IActionResult> EditUser(Guid guid, [FromBody] EditUserCmd editusercmd)
+        [HttpPut("displayname/{guid:Guid}")]
+        public async Task<IActionResult> EditDisplayname(Guid guid, [FromBody] EditUserCmd editusercmd)
         {
-            // if (guid != editusercmd.Guid) { return Unauthorized(); }
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
             if (user is null) { return NotFound(); }
-            user.Username = editusercmd.Username;
             user.Displayname = editusercmd.Displayname;
+            try { await _db.SaveChangesAsync(); }
+            catch (DbUpdateException) { return BadRequest(); }
+            return NoContent();
+        }
+
+        [HttpPut("email/{guid:Guid}")]
+        public async Task<IActionResult> EditEmail(Guid guid, [FromBody] EditUserCmd editusercmd)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
+            if (user is null) { return NotFound(); }
             user.Email = editusercmd.Email;
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
             return NoContent();
         }
 
-        /// <summary>
-        /// We cannot access the cookie in JavaScript. To check the auth state, we can send a request
-        /// to /api/user/userinfo. So we can set our application state.
-        /// </summary>
-        [Authorize]
-        [HttpGet("userinfo")]
-        public async Task<IActionResult> GetUserInfoAsync()
+        [HttpPut("password/{guid:Guid}")]
+        public async Task<IActionResult> EditPassword(Guid guid, [FromBody] EditPasswordCmd editpasswordcmd)
         {
-            var authenticated = HttpContext.User.Identity?.IsAuthenticated ?? false;
-            if (!authenticated) { return Unauthorized(); }
-            var username = HttpContext.User.Identity?.Name;
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == username);
-            if(user is null) { return Unauthorized(); }
-            return Ok(new
-            {
-                user.Username,
-                user.Displayname,
-                userGuid = user.Guid,
-                user.Email,
-                user.Role,
-            });
-        }
-
-        [HttpGet("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync();
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
+            if (user is null) { return NotFound(); }
+            if (user!.CheckPassword(editpasswordcmd.Password)) { return Unauthorized(); }
+            // TODO: NEW PASSWORD, CONFIRM NEW PASSWORD
+            //user.Password = editpasswordcmd.Password;
+            try { await _db.SaveChangesAsync(); }
+            catch (DbUpdateException) { return BadRequest(); }
             return NoContent();
         }
     }

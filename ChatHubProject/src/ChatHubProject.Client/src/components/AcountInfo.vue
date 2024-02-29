@@ -2,6 +2,8 @@
 import axios from "axios";
 import store from '../store.js'
 import PasswordButton from "../components/PasswordButton.vue"
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
@@ -9,30 +11,19 @@ import PasswordButton from "../components/PasswordButton.vue"
     <h1> Account </h1>
     <section>
       <div>
-        <h6> Username </h6> 
-        <input 
-          type="text" :placeholder="username" v-model="accountModel.username" 
-          @focus="getEmptyUsernameValue()" 
-          @blur="getUsernameValue()"
-          @keyup.enter="setUsername()"
-        >
-      </div>
-      <div>
-        <h6> Display name </h6> 
+        <h6> Displayname </h6> 
         <input 
           type="text" :placeholder="displayname" v-model="accountModel.displayname" 
-          @focus="getEmptyUsernameValue()" 
-          @blur="getUsernameValue()"
-          @keyup.enter="setUsername()"
+          @keyup.enter="setDisplayname()"
+          ref="displaynamefield"
         >
       </div>
       <div>
         <h6> Email </h6> 
         <input 
           type="email" :placeholder="email" v-model="accountModel.email"
-          @focus="getEmptyEmailValue()" 
-          @blur="getEmailValue()"
           @keyup.enter="setEmail()"
+          ref="emailfield"
         >
       </div>
       <div id="password">
@@ -50,16 +41,12 @@ import PasswordButton from "../components/PasswordButton.vue"
 export default {
   async mounted() {
     await this.getUserdata();
-    await this.getUsername();
     await this.getDisplayname();
     await this.getEmail();
   },
   computed: {
     guid() {
       return this.$store.state.user.guid;
-    },
-    username() { 
-      return "";
     },
     displayname() { 
       return "";
@@ -71,7 +58,6 @@ export default {
   data() {
     return {
       accountModel: {
-        username: "",
         displayname: "",
         email: "",
       }
@@ -82,24 +68,26 @@ export default {
       var userdata = (await axios.get("user/userinfo")).data
       store.commit("authenticate", userdata);
     },
-    async getUsername() {
-      this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
-    },
     async getDisplayname() {
       this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
-    async getEmail() {
-      this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email
+    async setDisplayname() {
+      await axios.put(`/user/displayname/${this.guid}`, this.accountModel)
+      this.$refs.displaynamefield.blur();
     },
-    async setUsername() {
-      console.log(await axios.put(`/user/${this.guid}`, this.accountModel))
-      await axios.put(`/user/${this.guid}`, this.accountModel)
+    async getEmail() {
+      this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email 
+    },
+    async setEmail() {
+      try { await axios.put(`/user/email/${this.guid}`, this.accountModel) }
+      catch(e) { toast.error("Invalid Email"); }
+      this.$refs.emailfield.blur();
+    },
+    getEmptyPasswordValue() {
+      this.accountModel.password = "";
     },
     async setPassword() {
       (await axios.put(`/user/${this.guid}`)).data.password
-    },
-    async setEmail() {
-      (await axios.put(`/user/${this.guid}`)).data.email
     },
     checkPassword() {
       this.accountModel.checkedPassword = true;
@@ -108,30 +96,6 @@ export default {
       this.accountModel.newpassword = "";
       this.accountModel.confirmpassword = "";
       this.accountModel.checkedPassword = false;
-    },
-    getEmptyUsernameValue() {
-      this.accountModel.username = "";
-    },
-    async getUsernameValue() {
-      this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
-    },
-    getEmptyDisplaynameValue() {
-      this.accountModel.displayname = "";
-    },
-    async getDisplaynameValue() {
-      this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
-    },
-    getEmptyPasswordValue() {
-      this.accountModel.password = "";
-    },
-    async getPasswordValue() {
-      this.accountModel.password = (await axios.get(`/user/${this.guid}`)).data.password
-    },
-    getEmptyEmailValue() {
-      this.accountModel.email = "";
-    },
-    async getEmailValue() {
-      this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email
     },
     deleteAccount() {
       alert("Delete");
@@ -152,7 +116,7 @@ export default {
   padding: 3rem;
   flex-direction: column;
 }
-input, select, button {
+input, button {
   width: 50%;
   padding: .5rem;
   border: 1px solid transparent;
@@ -168,6 +132,9 @@ h6 {
 }
 button {
   background: red;
+}
+.invalid {
+  color: red;
 }
 #password {
   margin: 2rem 0  ;

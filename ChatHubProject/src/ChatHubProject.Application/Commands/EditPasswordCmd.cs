@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace ChatHubProject.Application.Commands
 {
-    public record EditUserCmd(
+    public record EditPasswordCmd(
 
-        string Username,
+        string Password,
 
-        string Displayname,
+        string NewPassword,
 
-        string Email
+        string ConfirmNewPassword
     );
 }
