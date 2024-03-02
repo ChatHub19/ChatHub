@@ -7,7 +7,7 @@ import ProfileAvatar from "vue-profile-avatar";
 <template>
   <div class="wrapper">
     <div class="avatar">
-      <ProfileAvatar :username="displayname" size="m" colorType="pastel"/> 
+      <ProfileAvatar v-if="authenticated" :username="displayname" size="m" colorType="pastel"/> 
       <div id="userinfo">
         <span> {{ displayname }} </span>
         <span> Offline </span>
@@ -30,11 +30,14 @@ export default {
   },
   computed: {
     guid() {
-      return this.$store.state.user.guid;
+      return this.$store.state.user.guid
     },
     displayname() {
-      return this.$store.state.user.displayname;
+      return this.$store.state.user.displayname
     },
+    authenticated() {
+      return this.$store.state.user.isLoggedIn
+    }
   }, 
   data() {
     return {
