@@ -8,7 +8,12 @@ import 'vue3-toastify/dist/index.css';
 
 <template>
   <div class="wrapper">
-    <h1> Account </h1>
+    <div id="flex">
+      <h1> Account </h1>
+      <router-link id="redirect-btn" to="/"> 
+        <font-awesome-icon class="icon" icon="fa-solid fa-x" />
+      </router-link>
+    </div>
     <section>
       <div>
         <h6> Displayname </h6> 
@@ -31,6 +36,7 @@ import 'vue3-toastify/dist/index.css';
         <PasswordButton/>
       </div>
       <div id="delete">
+        <h6> Delete Account </h6> 
         <button class="button" @click="deleteAccount()"> Delete Account </button>
       </div>
     </section>
@@ -65,40 +71,37 @@ export default {
   },
   methods: {
     async getUserdata() {
-      var userdata = (await axios.get("user/userinfo")).data
-      store.commit("authenticate", userdata);
+      try {
+        var userdata = (await axios.get("user/userinfo")).data
+        store.commit("authenticate", userdata)
+      } 
+      catch (e) { e.response.data }
     },
     async getDisplayname() {
       this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
     async setDisplayname() {
-      await axios.put(`/user/displayname/${this.guid}`, this.accountModel)
-      this.$refs.displaynamefield.blur();
+      try {await axios.put(`/user/displayname/${this.guid}`, this.accountModel) }
+      catch(e) { toast.error(e.response.data) }
+      this.$refs.displaynamefield.blur()
     },
     async getEmail() {
       this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email 
     },
     async setEmail() {
       try { await axios.put(`/user/email/${this.guid}`, this.accountModel) }
-      catch(e) { toast.error("Invalid Email"); }
-      this.$refs.emailfield.blur();
+      catch(e) { toast  .error(e.response.data.errors.Email[0]) }
+      this.$refs.emailfield.blur()
     },
-    getEmptyPasswordValue() {
-      this.accountModel.password = "";
+    async deleteAccount() {
+      try { 
+        await axios.delete(`/user/${this.guid}`) 
+        this.$router.push("/login")
+      }
+      catch(e) { toast  .error(e.response.data) }
     },
-    async setPassword() {
-      (await axios.put(`/user/${this.guid}`)).data.password
-    },
-    checkPassword() {
-      this.accountModel.checkedPassword = true;
-    },
-    confirmPassword() {
-      this.accountModel.newpassword = "";
-      this.accountModel.confirmpassword = "";
-      this.accountModel.checkedPassword = false;
-    },
-    deleteAccount() {
-      alert("Delete");
+    returnToHomepage() {
+      this.$router.push("/")
     }
   }
 }
@@ -124,6 +127,9 @@ input, button {
   color: white;
   background: rgba(0, 0, 0, 0.374);
 }
+input:hover {
+  background: rgba(0, 0, 0, 0.56);
+}
 section {
   margin-top: 1%;
 }
@@ -133,13 +139,28 @@ h6 {
 button {
   background: red;
 }
+.icon {
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
+  padding: 10px;
+  border: 3px solid white;
+  border-radius: 50%;
+}
 .invalid {
   color: red;
 }
-#password {
-  margin: 2rem 0  ;
+#flex {
+  display: flex;
+  align-items: center;
 }
-delete {
+#redirect-btn {
+  margin-left: auto;
+}
+.icon:hover {
+  background: rgba(23, 24, 26, 0.311);
+}
+#delete {
   margin: 5rem 0;
 }
 </style>

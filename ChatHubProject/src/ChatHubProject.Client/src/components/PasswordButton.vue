@@ -1,3 +1,10 @@
+<script setup>
+import axios from "axios";
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+</script>
+
+
 <template>
   <div>
     <button @click="openModal()" @keyup.enter="openModal()"> 
@@ -7,11 +14,12 @@
       <div class="modal-content">
         <span class="close" @click="closeModal()">&times;</span>
         <h6> Password </h6> 
-        <input type="password" :placeholder="password" v-model="accountModel.password">
+        <input type="password" v-model="accountModel.password">
         <h6> New Password </h6> 
-        <input type="password" :placeholder="password" v-model="accountModel.newpassword">
+        <input type="password" v-model="accountModel.newpassword">
         <h6> Confirm New Password </h6> 
-        <input type="password" :placeholder="password" v-model="accountModel.confirmnewpasswordpassword">
+        <input type="password" v-model="accountModel.confirmnewpassword">
+        <button id="save" @click="setPassword()"> Save Change </button>
       </div>
     </div>
   </div>
@@ -19,6 +27,11 @@
 
 <script>
 export default {
+  computed: {
+    guid() {
+      return this.$store.state.user.guid;
+    }
+  },
   data() {
     return {
       showModal: false,
@@ -35,6 +48,14 @@ export default {
     },
     closeModal() {
       this.showModal = false;
+    },
+    async setPassword() {
+      try { 
+        await axios.put(`/user/password/${this.guid}`, this.accountModel) 
+        this.closeModal()
+        toast.success("Success")
+      }
+      catch(e) { toast.error(e.response.data) }
     }
   }
 }
@@ -87,5 +108,9 @@ input {
   top: 10px;
   right: 10px;
   cursor: pointer;
+}
+#save {
+  margin-top: 30px;
+  width: 100%;
 }
 </style>

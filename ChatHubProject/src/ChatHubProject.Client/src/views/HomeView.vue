@@ -1,14 +1,15 @@
 <script setup>
-import UserProfileIcon from "../components/UserIcon.vue"
+import UserProfileIcon from "../components/UserProfileIcon.vue"
 </script>
 
 <template>
-  <UserProfileIcon/>
+  <div class="wrapper">
+    <UserProfileIcon/>
+  </div>
 </template>
 
 <script>
 export default {
-
 
 }
 </script>

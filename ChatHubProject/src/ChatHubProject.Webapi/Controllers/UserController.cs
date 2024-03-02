@@ -69,10 +69,10 @@ namespace ChatHubProject.Webapi.Controllers
         public async Task<IActionResult> GetUserInfoAsync()
         {
             var authenticated = HttpContext.User.Identity?.IsAuthenticated ?? false;
-            if (!authenticated) { return Unauthorized(); }
+            if (!authenticated) { return Unauthorized("User is not authenticated"); }
             var username = HttpContext.User.Identity?.Name;
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == username);
-            if (user is null) { return Unauthorized(); }
+            if (user is null) { return Unauthorized("User does not exist"); }
             return Ok(new
             {
                 user.Username,
@@ -102,7 +102,7 @@ namespace ChatHubProject.Webapi.Controllers
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.Username);
             if (user is not null) 
             {
-                if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
+                if (!user.CheckPassword(credentials.Password)) { return Unauthorized("Login failed! Invalid credentials!"); }
 
                 var role = Userrole.Pupil.ToString();
                 var claims = new List<Claim>
@@ -144,7 +144,7 @@ namespace ChatHubProject.Webapi.Controllers
                     ? AdService.Login(searchuser, searchpass, credentials.Username)
                     : AdService.Login(credentials.Username, credentials.Password);
                 var currentUser = service.CurrentUser;
-                if (currentUser is null) { return Unauthorized(); }
+                if (currentUser is null) { return Unauthorized("Login failed! Invalid credentials!"); }
 
                 if (user is null)
                 {
@@ -153,7 +153,7 @@ namespace ChatHubProject.Webapi.Controllers
                     try { await _db.SaveChangesAsync(); }
                     catch (DbUpdateException) { return BadRequest(); }
                 }
-                if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
+                if (!user.CheckPassword(credentials.Password)) { return Unauthorized("Login failed! Invalid credentials!"); }
 
                 var role = localAdmins.Contains(currentUser.Cn)
                                 ? AdUserRole.Management.ToString()
@@ -210,7 +210,7 @@ namespace ChatHubProject.Webapi.Controllers
                 catch (DbUpdateException) { return BadRequest(); }
             }
             else { return BadRequest("User is already in the database."); }
-            if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
+            if (!user.CheckPassword(credentials.Password)) { return Unauthorized("Login failed! Invalid credentials!"); }
 
             var claims = new List<Claim>
             {
@@ -246,10 +246,11 @@ namespace ChatHubProject.Webapi.Controllers
         public async Task<IActionResult> DeleteUser(Guid guid)
         {
             var users = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
-            if (users is null) { return NotFound(); }
+            if (users is null) { return NotFound("User does not exist"); }
             _db.Users.Remove(users);
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
+            await HttpContext.SignOutAsync();
             return NoContent();
         }
 
@@ -257,7 +258,7 @@ namespace ChatHubProject.Webapi.Controllers
         public async Task<IActionResult> EditDisplayname(Guid guid, [FromBody] EditUserCmd editusercmd)
         {
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
-            if (user is null) { return NotFound(); }
+            if (user is null) { return NotFound("User does not exist"); }
             user.Displayname = editusercmd.Displayname;
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
@@ -268,7 +269,7 @@ namespace ChatHubProject.Webapi.Controllers
         public async Task<IActionResult> EditEmail(Guid guid, [FromBody] EditUserCmd editusercmd)
         {
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
-            if (user is null) { return NotFound(); }
+            if (user is null) { return NotFound("User does not exist"); }
             user.Email = editusercmd.Email;
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
@@ -279,10 +280,10 @@ namespace ChatHubProject.Webapi.Controllers
         public async Task<IActionResult> EditPassword(Guid guid, [FromBody] EditPasswordCmd editpasswordcmd)
         {
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
-            if (user is null) { return NotFound(); }
-            if (user!.CheckPassword(editpasswordcmd.Password)) { return Unauthorized(); }
-            // TODO: NEW PASSWORD, CONFIRM NEW PASSWORD
-            //user.Password = editpasswordcmd.Password;
+            if (user is null) { return NotFound("User does not exist"); }
+            if (!user.CheckPassword(editpasswordcmd.Password)) { return Unauthorized("Invalid Password"); }
+            if(editpasswordcmd.NewPassword != editpasswordcmd.ConfirmNewPassword) { return BadRequest("Confirm Password is wrong"); }
+            user.SetPassword(editpasswordcmd.NewPassword);
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
             return NoContent();

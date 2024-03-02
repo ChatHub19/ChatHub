@@ -9,8 +9,8 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/js/bootstrap.js'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faArrowLeftLong, faArrowRightLong, faGear } from '@fortawesome/free-solid-svg-icons'
-library.add(faArrowLeftLong, faArrowRightLong, faGear)
+import { faArrowLeftLong, faArrowRightLong, faCaretLeft, faGear, faX } from '@fortawesome/free-solid-svg-icons'
+library.add(faArrowLeftLong, faArrowRightLong, faGear, faX, faCaretLeft)
 
 axios.defaults.baseURL = process.env.NODE_ENV == 'production' ? "/api" : "https://localhost:7081/api";
 axios.defaults.withCredentials = true;

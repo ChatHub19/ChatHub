@@ -4,7 +4,7 @@ export default createStore({
   state() {
     return {
       user: {
-        username: "",
+        displayname: "",
         guid: "",
         role: "",
         isLoggedIn: false,
@@ -14,10 +14,10 @@ export default createStore({
   mutations: {
     authenticate(state, userdata) {
       if (!userdata) {
-        state.user = { username: "", guid: "", role: "", isLoggedIn: false };
+        state.user = { displayname: "", guid: "", role: "", isLoggedIn: false };
         return;
       }
-      state.user.username = userdata.username;
+      state.user.displayname = userdata.displayname;
       state.user.guid = userdata.userGuid;
       state.user.role = userdata.role;
       state.user.isLoggedIn = true;

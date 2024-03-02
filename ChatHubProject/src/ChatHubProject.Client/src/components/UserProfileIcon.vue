@@ -1,16 +1,21 @@
 <script setup>
+import axios from "axios";
+import store from '../store.js'
 import ProfileAvatar from "vue-profile-avatar";
 </script>
 
 <template>
   <div class="wrapper">
     <div class="avatar">
-      <ProfileAvatar :username="username" size="m" colorType="pastel"/> 
+      <ProfileAvatar :username="displayname" size="m" colorType="pastel"/> 
       <div id="userinfo">
-        <span> {{ username }} </span>
+        <span> {{ displayname }} </span>
         <span> Offline </span>
       </div>
-      <router-link id="redirect-btn" to="/custom"> 
+      <router-link class="redirect-btn" to="/login" @click="logout()"> 
+        <div class="option"> <font-awesome-icon icon="fa-solid fa-caret-left" /> </div> 
+      </router-link> 
+      <router-link class="redirect-btn" to="/custom"> 
         <div class="option"> <font-awesome-icon icon="fa-solid fa-gear" /> </div> 
       </router-link> 
     </div>
@@ -19,19 +24,44 @@ import ProfileAvatar from "vue-profile-avatar";
 
 <script>
 export default {
+  async mounted() {
+    await this.getUserdata();
+    await this.getDisplayname();
+  },
   computed: {
-    username() {
-      return this.$store.state.user.username;
+    guid() {
+      return this.$store.state.user.guid;
+    },
+    displayname() {
+      return this.$store.state.user.displayname;
     },
   }, 
   data() {
     return {
       showOption: false,
+      accountModel: {
+        displayname: "",
+      }
+    }
+  }, 
+  methods: {
+    async getUserdata() {
+      try {
+        var userdata = (await axios.get("user/userinfo")).data
+        store.commit("authenticate", userdata)
+      } 
+      catch (e) { e.response.data }
+    },
+    async getDisplayname() {
+      this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
+    },
+    async logout() {
+      (await axios.get("user/logout")).data
     }
   },
   components: {
     ProfileAvatar,
-  },  
+  }, 
 }
 </script>
 
@@ -68,7 +98,7 @@ export default {
 .option:hover {
   background: rgba(211, 211, 211, 0.578);
 }
-#redirect-btn {
+.redirect-btn {
   text-decoration: none;
   color: black;
 }

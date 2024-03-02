@@ -48,12 +48,7 @@ export default {
         this.$router.push("/");
 			} 
 			catch (e) {
-				if (e.response.status == 401) {
-          toast.error("Login failed! Invalid credentials!");
-        }
-        if (e.response.status == 400) {
-          toast.error("User is already in the database!");
-        }
+				toast.error(e.response.data);
       }
 		},
 	}

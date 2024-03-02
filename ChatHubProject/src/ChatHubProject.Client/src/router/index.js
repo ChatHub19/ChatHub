@@ -27,7 +27,8 @@ const router = createRouter({
     {
       path: '/custom',
       name: 'custom',
-      component: CustomView
+      component: CustomView,
+      meta: { authorize: true },
     },
   ]
 })
@@ -38,7 +39,6 @@ router.beforeEach((to, from, next) => {
     next("/login");
     return;
   }
-
   next();
   return;
 });
