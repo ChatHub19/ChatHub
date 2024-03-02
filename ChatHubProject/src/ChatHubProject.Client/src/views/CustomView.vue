@@ -6,11 +6,11 @@ import AccountInfo from "../components/AcountInfo.vue"
   <div class="wrapper">
     <aside>
       <span class="info"> User Settings </span>
-      <span class="option" @click="getAccountInfo()"> Account </span>
-      <span class="option"> Profile </span>
+      <span class="option"> Account </span>
+      <!-- <span class="option"> Profile </span>
       <span class="option"> Security </span>
       <span class="option"> Languange </span>
-      <span class="option"> Advance </span>
+      <span class="option"> Advance </span> -->
     </aside>
     <section>
       <div class="custom-option">
@@ -22,13 +22,7 @@ import AccountInfo from "../components/AcountInfo.vue"
 
 <script>
 export default {
-  async mounted() {
-    await this.getAccountInfo();
-  },
-  methods: {
-    async getAccountInfo() {
-    }
-  }
+  
 }
 </script>
 
@@ -58,6 +52,9 @@ section {
   align-items: flex-start;
   background: #36393f;
   color: white;
+}
+span:hover {
+  color: rgba(255, 255, 255, 0.649);
 }
 .info:first-child {
   margin-top: 10%;

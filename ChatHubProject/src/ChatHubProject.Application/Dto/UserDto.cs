@@ -10,6 +10,9 @@ namespace ChatHubProject.Application.Dto
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Name must contain at least 3 letters")]
         string Username,
 
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Name must contain at least 3 letters")]
+        string Displayname,
+
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Password must contain at least 3 letters")]
         string Password,
 

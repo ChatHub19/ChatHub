@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ChatHubProject.Application.Commands;
 using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using ChatHubProject.Application.Model;
@@ -47,15 +48,46 @@ namespace ChatHubProject.Webapi.Controllers
         [HttpGet("{guid}")]
         public async Task<IActionResult> GetUser(Guid guid)
         {
-            return await GetByGuid(guid, a => new
+            return await GetByGuid(guid, u => new
             {
-                a.Guid,
-                a.Username,
-                a.Password,
-                a.Email,
-                a.Role,
-                a.Group,
+                u.Guid,
+                u.Username,
+                u.Displayname,
+                u.Password,
+                u.Email,
+                u.Role,
+                u.Group,
             });
+        }
+
+        /// <summary>
+        /// We cannot access the cookie in JavaScript. To check the auth state, we can send a request
+        /// to /api/user/userinfo. So we can set our application state.
+        /// </summary>
+        [Authorize]
+        [HttpGet("userinfo")]
+        public async Task<IActionResult> GetUserInfoAsync()
+        {
+            var authenticated = HttpContext.User.Identity?.IsAuthenticated ?? false;
+            if (!authenticated) { return Unauthorized("User is not authenticated"); }
+            var username = HttpContext.User.Identity?.Name;
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == username);
+            if (user is null) { return Unauthorized("User does not exist"); }
+            return Ok(new
+            {
+                user.Username,
+                user.Displayname,
+                userGuid = user.Guid,
+                user.Email,
+                user.Role,
+            });
+        }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return NoContent();
         }
 
         /// <summary>
@@ -70,7 +102,7 @@ namespace ChatHubProject.Webapi.Controllers
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.Username);
             if (user is not null) 
             {
-                if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
+                if (!user.CheckPassword(credentials.Password)) { return Unauthorized("Login failed! Invalid credentials!"); }
 
                 var role = Userrole.Pupil.ToString();
                 var claims = new List<Claim>
@@ -112,16 +144,16 @@ namespace ChatHubProject.Webapi.Controllers
                     ? AdService.Login(searchuser, searchpass, credentials.Username)
                     : AdService.Login(credentials.Username, credentials.Password);
                 var currentUser = service.CurrentUser;
-                if (currentUser is null) { return Unauthorized(); }
+                if (currentUser is null) { return Unauthorized("Login failed! Invalid credentials!"); }
 
                 if (user is null)
                 {
-                    user = new User(credentials.Username, credentials.Password, $"{credentials.Username}@spengergasse.at", Userrole.Pupil.ToString());
+                    user = new User(credentials.Username, credentials.Username, credentials.Password, $"{credentials.Username}@spengergasse.at", Userrole.Pupil.ToString());
                     await _db.Users.AddAsync(user);
                     try { await _db.SaveChangesAsync(); }
                     catch (DbUpdateException) { return BadRequest(); }
                 }
-                if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
+                if (!user.CheckPassword(credentials.Password)) { return Unauthorized("Login failed! Invalid credentials!"); }
 
                 var role = localAdmins.Contains(currentUser.Cn)
                                 ? AdUserRole.Management.ToString()
@@ -165,11 +197,6 @@ namespace ChatHubProject.Webapi.Controllers
             }
         }
 
-        /// <summary>
-        /// POST /api/user/register
-        /// </summary>
-        /// <param name="credentials"></param>
-        /// <returns></returns>
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto credentials)
         {
@@ -177,13 +204,13 @@ namespace ChatHubProject.Webapi.Controllers
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.Email);
             if (user is null)
             {   
-                user = new User(credentials.Username, credentials.Password, credentials.Email, role);
+                user = new User(credentials.Username, credentials.Username, credentials.Password, credentials.Email, role);
                 await _db.Users.AddAsync(user);
                 try { await _db.SaveChangesAsync(); }
                 catch (DbUpdateException) { return BadRequest(); }
             }
             else { return BadRequest("User is already in the database."); }
-            if (!user.CheckPassword(credentials.Password)) { return Unauthorized(); }
+            if (!user.CheckPassword(credentials.Password)) { return Unauthorized("Login failed! Invalid credentials!"); }
 
             var claims = new List<Claim>
             {
@@ -215,68 +242,50 @@ namespace ChatHubProject.Webapi.Controllers
             });
         }
 
-        /// <summary>
-        /// DELETE Request /api/user/guid with JSON body
-        /// Deletes a user in the database.
-        /// </summary>
-        /// <param name="guid"></param>
-        /// <returns></returns>
         [HttpDelete("{guid:Guid}")]
         public async Task<IActionResult> DeleteUser(Guid guid)
         {
             var users = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
-            if (users is null) { return NotFound(); }
+            if (users is null) { return NotFound("User does not exist"); }
             _db.Users.Remove(users);
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
+            await HttpContext.SignOutAsync();
             return NoContent();
         }
 
-        /// <summary>
-        /// PUT Request /api/user/guid with JSON body
-        /// Updates a user in the database. 
-        /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="userDto"></param>
-        /// <returns></returns>
-        [HttpPut("{guid:Guid}")]
-        public async Task<IActionResult> EditUser(Guid guid, UserDto userDto)
+        [HttpPut("displayname/{guid:Guid}")]
+        public async Task<IActionResult> EditDisplayname(Guid guid, [FromBody] EditUserCmd editusercmd)
         {
-            if (guid != userDto.Guid) { return BadRequest(); }
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
-            if (user is null) { return NotFound(); }
-            _mapper.Map(userDto, user);
+            if (user is null) { return NotFound("User does not exist"); }
+            user.Displayname = editusercmd.Displayname;
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
             return NoContent();
         }
 
-        /// <summary>
-        /// We cannot access the cookie in JavaScript. To check the auth state, we can send a request
-        /// to /api/user/userinfo. So we can set our application state.
-        /// </summary>
-        [Authorize]
-        [HttpGet("userinfo")]
-        public async Task<IActionResult> GetUserInfoAsync()
+        [HttpPut("email/{guid:Guid}")]
+        public async Task<IActionResult> EditEmail(Guid guid, [FromBody] EditUserCmd editusercmd)
         {
-            var authenticated = HttpContext.User.Identity?.IsAuthenticated ?? false;
-            if (!authenticated) { return Unauthorized(); }
-            var username = HttpContext.User.Identity?.Name;
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == username);
-            if(user is null) { return Unauthorized(); }
-            return Ok(new
-            {
-                user.Username,
-                userGuid = user.Guid,
-                user.Email,
-                user.Role,
-            });
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
+            if (user is null) { return NotFound("User does not exist"); }
+            user.Email = editusercmd.Email;
+            try { await _db.SaveChangesAsync(); }
+            catch (DbUpdateException) { return BadRequest(); }
+            return NoContent();
         }
 
-        [HttpGet("logout")]
-        public async Task<IActionResult> Logout()
+        [HttpPut("password/{guid:Guid}")]
+        public async Task<IActionResult> EditPassword(Guid guid, [FromBody] EditPasswordCmd editpasswordcmd)
         {
-            await HttpContext.SignOutAsync();
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
+            if (user is null) { return NotFound("User does not exist"); }
+            if (!user.CheckPassword(editpasswordcmd.Password)) { return Unauthorized("Invalid Password"); }
+            if(editpasswordcmd.NewPassword != editpasswordcmd.ConfirmNewPassword) { return BadRequest("Confirm Password is wrong"); }
+            user.SetPassword(editpasswordcmd.NewPassword);
+            try { await _db.SaveChangesAsync(); }
+            catch (DbUpdateException) { return BadRequest(); }
             return NoContent();
         }
     }

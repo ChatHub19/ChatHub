@@ -1,46 +1,42 @@
 <script setup>
 import axios from "axios";
 import store from '../store.js'
+import PasswordButton from "../components/PasswordButton.vue"
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
   <div class="wrapper">
-    <h1> Account </h1>
+    <div id="flex">
+      <h1> Account </h1>
+      <router-link id="redirect-btn" to="/"> 
+        <font-awesome-icon class="icon" icon="fa-solid fa-x" />
+      </router-link>
+    </div>
     <section>
       <div>
-        <h6> Username </h6> 
+        <h6> Displayname </h6> 
         <input 
-          type="text" :placeholder="username" v-model="accountModel.username" 
-          @focus="getEmptyUsernameValue()" 
-          @blur="getUsernameValue()"
-          @keyup.enter="setUsername()"
+          type="text" :placeholder="displayname" v-model="accountModel.displayname" 
+          @keyup.enter="setDisplayname()"
+          ref="displaynamefield"
         >
-      </div>
-      <div v-if="!accountModel.checkedPassword">
-        <h6> Password </h6> 
-        <input 
-          type="password" :value="password"
-          @focus="getEmptyPasswordValue()" 
-          @blur="getPasswordValue()"
-          @keyup.enter="checkPassword()"
-        >
-      </div>
-      <div v-else> 
-        <h6> New Password </h6> 
-        <input type="password" v-model="accountModel.newpassword">
-        <h6> Confirm Password </h6> 
-        <input type="password" v-model="accountModel.confirmpassword" @keyup.enter="confirmPassword()">
       </div>
       <div>
         <h6> Email </h6> 
         <input 
           type="email" :placeholder="email" v-model="accountModel.email"
-          @focus="getEmptyEmailValue()" 
-          @blur="getEmailValue()"
           @keyup.enter="setEmail()"
+          ref="emailfield"
         >
       </div>
+      <div id="password">
+        <h6> Password </h6> 
+        <PasswordButton/>
+      </div>
       <div id="delete">
+        <h6> Delete Account </h6> 
         <button class="button" @click="deleteAccount()"> Delete Account </button>
       </div>
     </section>
@@ -51,19 +47,15 @@ import store from '../store.js'
 export default {
   async mounted() {
     await this.getUserdata();
-    await this.getUsername();
-    await this.getPassword();
+    await this.getDisplayname();
     await this.getEmail();
   },
   computed: {
     guid() {
       return this.$store.state.user.guid;
     },
-    username() { 
+    displayname() { 
       return "";
-    },
-    password() {
-      return "123456789";
     },
     email() {
       return "";
@@ -72,66 +64,44 @@ export default {
   data() {
     return {
       accountModel: {
-        username: "",
-        password: "",
-        newpassword: "",
-        confirmpassword: "",
-        checkedPassword: false,
+        displayname: "",
         email: "",
       }
     }
   },
   methods: {
     async getUserdata() {
-      var userdata = (await axios.get("user/userinfo")).data
-      store.commit("authenticate", userdata);
+      try {
+        var userdata = (await axios.get("user/userinfo")).data
+        store.commit("authenticate", userdata)
+      } 
+      catch (e) { e.response.data }
     },
-    async getUsername() {
-      this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
+    async getDisplayname() {
+      this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
-    async getPassword() {
-      this.accountModel.password = (await axios.get(`/user/${this.guid}`)).data.password
+    async setDisplayname() {
+      try {await axios.put(`/user/displayname/${this.guid}`, this.accountModel) }
+      catch(e) { toast.error(e.response.data) }
+      this.$refs.displaynamefield.blur()
     },
     async getEmail() {
-      this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email
-    },
-    async setUsername() {
-      (await axios.put(`/user/${this.guid}`)).data.username
-    },
-    async setPassword() {
-      (await axios.put(`/user/${this.guid}`)).data.password
+      this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email 
     },
     async setEmail() {
-      (await axios.put(`/user/${this.guid}`)).data.email
+      try { await axios.put(`/user/email/${this.guid}`, this.accountModel) }
+      catch(e) { toast  .error(e.response.data.errors.Email[0]) }
+      this.$refs.emailfield.blur()
     },
-    checkPassword() {
-      this.accountModel.checkedPassword = true;
+    async deleteAccount() {
+      try { 
+        await axios.delete(`/user/${this.guid}`) 
+        this.$router.push("/login")
+      }
+      catch(e) { toast  .error(e.response.data) }
     },
-    confirmPassword() {
-      this.accountModel.newpassword = "";
-      this.accountModel.confirmpassword = "";
-      this.accountModel.checkedPassword = false;
-    },
-    getEmptyUsernameValue() {
-      this.accountModel.username = "";
-    },
-    async getUsernameValue() {
-      this.accountModel.username = (await axios.get(`/user/${this.guid}`)).data.username
-    },
-    getEmptyPasswordValue() {
-      this.accountModel.password = "";
-    },
-    async getPasswordValue() {
-      this.accountModel.password = (await axios.get(`/user/${this.guid}`)).data.password
-    },
-    getEmptyEmailValue() {
-      this.accountModel.email = "";
-    },
-    async getEmailValue() {
-      this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email
-    },
-    deleteAccount() {
-      alert("Delete");
+    returnToHomepage() {
+      this.$router.push("/")
     }
   }
 }
@@ -149,13 +119,16 @@ export default {
   padding: 3rem;
   flex-direction: column;
 }
-input, select, button {
+input, button {
   width: 50%;
   padding: .5rem;
   border: 1px solid transparent;
   border-radius: 5px;
   color: white;
   background: rgba(0, 0, 0, 0.374);
+}
+input:hover {
+  background: rgba(0, 0, 0, 0.56);
 }
 section {
   margin-top: 1%;
@@ -165,6 +138,27 @@ h6 {
 }
 button {
   background: red;
+}
+.icon {
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
+  padding: 10px;
+  border: 3px solid white;
+  border-radius: 50%;
+}
+.invalid {
+  color: red;
+}
+#flex {
+  display: flex;
+  align-items: center;
+}
+#redirect-btn {
+  margin-left: auto;
+}
+.icon:hover {
+  background: rgba(23, 24, 26, 0.311);
 }
 #delete {
   margin: 5rem 0;

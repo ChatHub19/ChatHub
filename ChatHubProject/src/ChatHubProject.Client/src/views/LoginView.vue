@@ -46,8 +46,8 @@ export default {
 				if (e.response.status == 500) {
           toast.error("Login failed! User does not exist!");
         }
-        if (e.response.status == 401) {
-          toast.error("Login failed! Invalid credentials!");
+        else {
+          toast.error(e.response.data);
         }
       }
 		},

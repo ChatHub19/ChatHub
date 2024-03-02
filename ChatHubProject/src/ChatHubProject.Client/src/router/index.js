@@ -27,18 +27,18 @@ const router = createRouter({
     {
       path: '/custom',
       name: 'custom',
-      component: CustomView
+      component: CustomView,
+      meta: { authorize: true },
     },
   ]
 })
 
 router.beforeEach((to, from, next) => {
   const authenticated = store.state.user.isLoggedIn;
-  if (to.meta.authorize && !authenticated) {
+  if (to.meta.authorize && !authenticated && document.cookie == null) {
     next("/login");
     return;
   }
-
   next();
   return;
 });
