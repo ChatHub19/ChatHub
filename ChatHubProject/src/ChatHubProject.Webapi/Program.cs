@@ -10,6 +10,7 @@ using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using ChatHubProject.Webapi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,7 +103,10 @@ app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
+app.MapHub<MessageHub>("/messageHub", options =>
+{
+    options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets;
+});
 // Wichtig für das clientseitige Routing, damit wir direkt an eine URL in der Client App steuern können.
 app.MapFallbackToFile("index.html");
 app.Run();

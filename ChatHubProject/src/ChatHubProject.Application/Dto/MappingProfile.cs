@@ -11,8 +11,6 @@ namespace ChatHubProject.Application.Dto
             CreateMap<UserDto, User>();
             CreateMap<MessageDto, Message>();
             CreateMap<Message, MessageDto>();
-            CreateMap<MessageDto, Message>();
-            CreateMap<Message, MessageDto>();
         }
     }
 }

@@ -9,12 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -31,19 +28,12 @@ namespace ChatHubProject.Webapi.Controllers
             _isDevelopment = _env.IsDevelopment();
         }
 
-        /// <summary>
-        /// GET /api/user/
-        /// </summary>
-        /// <returns></returns>
+
         [Authorize(Roles = "Administration")]
         [HttpGet]
         public async Task<IActionResult> GetAllUser() => await GetAll<UserDto>();
 
-        /// <summary>
-        /// GET /api/user/guid
-        /// </summary>
-        /// <param name="guid"></param>
-        /// <returns></returns>
+
         [Authorize(Roles = "Administration")]
         [HttpGet("{guid}")]
         public async Task<IActionResult> GetUser(Guid guid)
@@ -91,11 +81,8 @@ namespace ChatHubProject.Webapi.Controllers
         }
 
         /// <summary>
-        /// POST /api/user/loginspg
         /// Login using either student or self-made account
         /// </summary>
-        /// <param name="credentials"></param>
-        /// <returns></returns>
         [HttpPost("login")]
         public async Task<IActionResult> LoginSPG([FromBody] LoginDto credentials)
         {

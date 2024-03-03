@@ -1,5 +1,6 @@
 <script setup>
 import axios from 'axios';
+import signalRService from '../services/SignalRService.js';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 </script>
@@ -39,7 +40,9 @@ export default {
 		async login() {
 			try {
 				const userdata = (await axios.post('user/login', this.loginModel)).data;
-        this.$store.commit('authenticate', userdata);    
+        this.$store.commit('authenticate', userdata);   
+				signalRService.configureConnection(); 
+				signalRService.connect(); 
         this.$router.push("/");
 			} 
 			catch (e) {
