@@ -2,7 +2,9 @@
 using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using ChatHubProject.Application.Model;
+using ChatHubProject.Webapi.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -38,6 +40,7 @@ namespace ChatHubProject.Webapi.Controllers
             });
         }
 
+        [HttpPatch]
         [HttpPost("send")]
         public async Task<IActionResult> SendMessage(MessageDto messageDto)
         {

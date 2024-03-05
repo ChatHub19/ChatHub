@@ -35,30 +35,18 @@ class SignalRService {
   subscribeEvent(type, callback) {
     this.connection.on(type, callback);
   }
-  
+
   unsubscribeEvent(type, callback) {
     if (typeof callback === 'undefined')
       this.connection.off(type);
     else
-    this.connection.off(type, callback);
+      this.connection.off(type, callback);
   } 
 
-  // //send and receive are the same
-  async sendMessageToAll(message, displayname, time) {
+  async sendMessageToAll(text, displayname, time) {
     if (!this.connected) { throw new Error("Invalid state. Not connected."); }
-    await this.connection.invoke("ReceiveMessage", message, displayname, time);
+    await this.connection.invoke("SendMessageToAll", text, displayname, time);
   }
-
-  async receiveMessage(message, displayname, time) {
-    if (!this.connected) { throw new Error("Invalid state. Not connected."); }
-    await this.connection.invoke("ReceiveMessage", message, displayname, time);
-  }
-
-  // async requestConnectedUsers() {
-  //     if (!this.connected) { throw new Error("Invalid state. Not connected."); }
-  //     // RequestConnectedUsers is corresponding to the C# Method in SignalR Hub.
-  //     await this.connection.invoke("RequestConnectedUsers");
-  // }    
 }
 
 const signalRSerivce = new SignalRService();

@@ -25,6 +25,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@aspnet/signalr": "^1.0.27",
     "@vitejs/plugin-vue": "^4.2.3",
     "eslint": "^8.39.0",
     "eslint-plugin-vue": "^9.11.0",

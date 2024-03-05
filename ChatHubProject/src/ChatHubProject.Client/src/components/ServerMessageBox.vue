@@ -20,9 +20,12 @@ import signalRService from '../services/SignalRService.js';
 <script>
 export default {
   async mounted() {
-    try { signalRService.subscribeEvent("ReceiveMessage", this.onReceiveMessage()); } 
+    try { signalRService.subscribeEvent("MessageAdded", this.onMessageAdded()); } 
     catch (e) { console.log(e); }
     await this.getUserdata();
+  },
+  unmounted() {
+    // signalRService.unsubscribeEvent("MessageAdded", this.onMessageAdded());
   },
   computed: {
     guid() {
@@ -48,9 +51,9 @@ export default {
       } 
       catch (e) { e.response.data }
     },
-    async onReceiveMessage() {
-      console.log("Message received");
+    async onMessageAdded() {
       this.messages = (await axios.get("message")).data;
+      console.log(this.messages);
     },
     formatTime(time) {
       const date = new Date(time);

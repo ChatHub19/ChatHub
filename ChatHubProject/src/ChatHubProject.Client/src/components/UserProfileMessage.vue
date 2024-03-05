@@ -39,10 +39,14 @@ import ProfileAvatar from "vue-profile-avatar";
 <script>
 export default {
   async mounted() {
-    try { signalRService.subscribeEvent("ReceiveMessage", this.onReceiveMessage()); } 
+    try { signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); } 
     catch (e) { console.log(e); }
     await this.getUserdata();
     await this.getDisplayname();
+    await this.getPrevMessage();
+  },
+  unmounted() {
+    signalRService.unsubscribeEvent("ReceiveMessage", this.onMessageReceived);
   },
   computed: {
     guid() {
@@ -76,6 +80,9 @@ export default {
     async getDisplayname() {
       this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
+    async getPrevMessage() {
+      this.messages = (await axios.get("message")).data
+    },
     async logout() {
       (await axios.get("user/logout")).data
     },
@@ -87,12 +94,14 @@ export default {
         const userguid = this.guid; 
         (await axios.post("message/send", {text, userguid, time}));
         signalRService.sendMessageToAll(text, displayname, time);
+        // try { signalRService.subscribeEvent("MessageReceived", this.onMessageReceived()); } 
+        // catch (e) { console.log(e); }
       }
       this.accountModel.message = "";
-      try { signalRService.subscribeEvent("ReceiveMessage", this.onReceiveMessage()); } 
-      catch (e) { console.log(e); }
+      // try { signalRService.subscribeEvent("MessageReceived", this.onMessageReceived()); } 
+      // catch (e) { console.log(e); }
     },
-    async onReceiveMessage() {
+    async onMessageReceived() {
       this.messages = (await axios.get("message")).data;
     },
     formatTime(time) {

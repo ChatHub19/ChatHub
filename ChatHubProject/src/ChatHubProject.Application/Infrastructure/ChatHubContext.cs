@@ -62,8 +62,8 @@ namespace ChatHubProject.Application.Infrastructure
                     email: "admin@gmail.com",
                     role: Userrole.Administration.ToString()),
                 new User(
-                    username: "pupil",
-                    displayname: "pupil",
+                    username: "user",
+                    displayname: "user",
                     password: "1234",
                     email: "user@gmail.com",
                     role: Userrole.Pupil.ToString()),
