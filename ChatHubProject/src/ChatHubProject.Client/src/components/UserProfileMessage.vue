@@ -39,11 +39,11 @@ import ProfileAvatar from "vue-profile-avatar";
 <script>
 export default {
   async mounted() {
-    try { signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); } 
-    catch (e) { console.log(e); }
     await this.getUserdata();
     await this.getDisplayname();
     await this.getPrevMessage();
+    try { signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); } 
+    catch (e) { console.log(e); }
   },
   unmounted() {
     signalRService.unsubscribeEvent("ReceiveMessage", this.onMessageReceived);
@@ -74,6 +74,8 @@ export default {
       try {
         var userdata = (await axios.get("user/userinfo")).data
         store.commit("authenticate", userdata)
+        signalRService.configureConnection(); 
+				signalRService.connect(); 
       } 
       catch (e) { e.response.data }
     },
