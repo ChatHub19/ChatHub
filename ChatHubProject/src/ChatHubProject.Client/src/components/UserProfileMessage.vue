@@ -20,7 +20,7 @@ import ProfileAvatar from "vue-profile-avatar";
         <ProfileAvatar v-if="authenticated" :username="displayname" size="m" colorType="pastel"/> 
         <div id="userinfo">
           <span> {{ displayname }} </span>
-          <span> Offline </span>
+          <span> {{ status }} </span>
         </div>
         <router-link class="redirect-btn" to="/login" @click="logout()"> 
           <div class="option"> <font-awesome-icon icon="fa-solid fa-caret-left" /> </div> 
@@ -42,6 +42,7 @@ export default {
     await this.getUserdata();
     await this.getDisplayname();
     await this.getPrevMessage();
+    await this.getOnlineStatus();
     try { signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); } 
     catch (e) { console.log(e); }
   },
@@ -63,6 +64,7 @@ export default {
     return {
       showOption: false,
       messages: [],
+      status: "Offline",
       accountModel: {
         message: "",
         displayname: "",
@@ -76,6 +78,7 @@ export default {
         store.commit("authenticate", userdata)
         signalRService.configureConnection(); 
 				signalRService.connect(); 
+        console.log()
       } 
       catch (e) { e.response.data }
     },
@@ -84,6 +87,12 @@ export default {
     },
     async getPrevMessage() {
       this.messages = (await axios.get("message")).data
+    },
+    getOnlineStatus() {
+      if(signalRService.connected)
+        this.status = "Online"
+      else
+        this.status = "Offline"
     },
     async logout() {
       (await axios.get("user/logout")).data
