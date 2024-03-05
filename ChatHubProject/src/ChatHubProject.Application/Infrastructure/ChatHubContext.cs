@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatHubProject.Application.Model;
+using Microsoft.VisualBasic;
 
 namespace ChatHubProject.Application.Infrastructure
 {
@@ -14,6 +15,7 @@ namespace ChatHubProject.Application.Infrastructure
         }
 
         public DbSet<User> Users => Set<User>();
+        public DbSet<Message> Messages => Set<Message>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,8 +62,8 @@ namespace ChatHubProject.Application.Infrastructure
                     email: "admin@gmail.com",
                     role: Userrole.Administration.ToString()),
                 new User(
-                    username: "pupil",
-                    displayname: "pupil",
+                    username: "user",
+                    displayname: "user",
                     password: "1234",
                     email: "user@gmail.com",
                     role: Userrole.Pupil.ToString()),
@@ -90,6 +92,19 @@ namespace ChatHubProject.Application.Infrastructure
             .GroupBy(a => a.Email).Select(g => g.First())
             .ToList();
             await Users.AddRangeAsync(users);
+            await SaveChangesAsync();
+
+            var message = new Faker<Message>("en").CustomInstantiator(f =>
+            {
+                return new Message(
+                    text: f.Lorem.Word(),
+                    user: f.Random.ListItem(users),
+                    time: DateTime.Now)
+                { Guid = f.Random.Guid() };
+            })
+            .Generate(10)
+            .ToList();
+            await Messages.AddRangeAsync(message);
             await SaveChangesAsync();
         }
 

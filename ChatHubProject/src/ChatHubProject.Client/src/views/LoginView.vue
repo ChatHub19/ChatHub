@@ -39,7 +39,7 @@ export default {
 		async login() {
 			try {
 				const userdata = (await axios.post('user/login', this.loginModel)).data;
-        this.$store.commit('authenticate', userdata);    
+        this.$store.commit('authenticate', userdata);   
         this.$router.push("/");
 			} 
 			catch (e) {
