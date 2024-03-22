@@ -54,7 +54,6 @@ namespace ChatHubProject.Webapi.Controllers
         /// We cannot access the cookie in JavaScript. To check the auth state, we can send a request
         /// to /api/user/userinfo. So we can set our application state.
         /// </summary>
-        [Authorize]
         [HttpGet("userinfo")]
         public async Task<IActionResult> GetUserInfoAsync()
         {
