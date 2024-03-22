@@ -34,8 +34,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const authenticated = store.state.user.isLoggedIn;  
-  if (to.meta.authorize && !authenticated && document.cookie === null) {
+  const authenticated = store.state.isLoggedIn;
+  if (to.meta.authorize && !authenticated) {
     next("/login");
     return;
   }

@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     guid() {
-      return this.$store.state.user.guid;
+      return this.$store.state.userdata.userGuid;
     },
     displayname() { 
       return "";

@@ -51,13 +51,13 @@ export default {
   },
   computed: {
     guid() {
-      return this.$store.state.user.guid
+      return this.$store.state.userdata.userGuid
     },
     displayname() {
-      return this.$store.state.user.displayname
+      return this.$store.state.userdata.displayname
     },
     authenticated() {
-      return this.$store.state.user.isLoggedIn
+      return this.$store.state.isLoggedIn
     }
   }, 
   data() {
@@ -78,7 +78,6 @@ export default {
         store.commit("authenticate", userdata)
         signalRService.configureConnection(); 
 				signalRService.connect(); 
-        console.log()
       } 
       catch (e) { e.response.data }
     },
@@ -105,12 +104,8 @@ export default {
         const userguid = this.guid; 
         (await axios.post("message/send", {text, userguid, time}));
         signalRService.sendMessageToAll(text, displayname, time);
-        // try { signalRService.subscribeEvent("MessageReceived", this.onMessageReceived()); } 
-        // catch (e) { console.log(e); }
       }
       this.accountModel.message = "";
-      // try { signalRService.subscribeEvent("MessageReceived", this.onMessageReceived()); } 
-      // catch (e) { console.log(e); }
     },
     async onMessageReceived() {
       this.messages = (await axios.get("message")).data;

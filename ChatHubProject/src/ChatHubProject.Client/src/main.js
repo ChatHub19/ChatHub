@@ -14,9 +14,19 @@ library.add(faArrowLeftLong, faArrowRightLong, faGear, faX, faCaretLeft)
 
 axios.defaults.baseURL = process.env.NODE_ENV == 'production' ? "/api" : "https://localhost:7081/api";
 axios.defaults.withCredentials = true;
-const app = createApp(App)
 
-app.use(router)
-app.use(store)
-app.component('font-awesome-icon', FontAwesomeIcon)
-app.mount('#app')
+axios
+  .get("user/userinfo")
+  .then((r) => {
+    store.commit("authenticate", r.data);
+  })
+  .finally(() => {
+    const app = createApp(App);
+    app.use(router)
+    app.use(store)
+    app.component('font-awesome-icon', FontAwesomeIcon)
+    app.mount('#app')
+  })
+  .catch(() => {
+    router.push("/login");
+  })

@@ -29,7 +29,7 @@ import 'vue3-toastify/dist/index.css';
 export default {
   computed: {
     guid() {
-      return this.$store.state.user.guid;
+      return this.$store.state.userdata.userGuid;
     }
   },
   data() {
