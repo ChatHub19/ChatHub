@@ -10,8 +10,11 @@ import ProfileAvatar from "vue-profile-avatar";
     <div class="flex flexbox">
       <div class="message-box">
         <div v-for="(message, index) in messages" :key="index" class="message">
-          {{ message.text }} 
-          <span class="time"> {{ formatTime(message.time) }} </span>
+          <div class="display-content">
+            <p class="displayname"> {{ message.displayname }} </p>
+            <p class="time"> {{ message.time }} </p>
+          </div>
+          <p> {{ message.text }} </p> 
         </div>
       </div>
     </div>
@@ -39,12 +42,17 @@ import ProfileAvatar from "vue-profile-avatar";
 <script>
 export default {
   async mounted() {
+    signalRService.configureConnection(); 
+		signalRService.connect();
     await this.getUserdata();
     await this.getDisplayname();
-    await this.getPrevMessage();
-    await this.getOnlineStatus();
-    try { signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); } 
-    catch (e) { console.log(e); }
+    await this.getOnlineStatus(); 
+    try { 
+      signalRService.sendJoinedMessageToAll();
+      signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); 
+      signalRService.subscribeEvent("ReceiveJoinedMessage", this.onMessageReceived); 
+    } 
+    catch (e) { console.log(e); }    
   },
   unmounted() {
     signalRService.unsubscribeEvent("ReceiveMessage", this.onMessageReceived);
@@ -76,18 +84,13 @@ export default {
       try {
         var userdata = (await axios.get("user/userinfo")).data
         store.commit("authenticate", userdata)
-        signalRService.configureConnection(); 
-				signalRService.connect(); 
       } 
       catch (e) { e.response.data }
     },
     async getDisplayname() {
       this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
-    async getPrevMessage() {
-      this.messages = (await axios.get("message")).data
-    },
-    getOnlineStatus() {
+    async getOnlineStatus() {
       if(signalRService.connected)
         this.status = "Online"
       else
@@ -107,17 +110,11 @@ export default {
       }
       this.accountModel.message = "";
     },
-    async onMessageReceived() {
-      this.messages = (await axios.get("message")).data;
-    },
-    formatTime(time) {
-      const date = new Date(time);
-      const now = new Date();
-      if(date.getDate() < now.getDate()){
-        return date.toLocaleDateString();
-      }
-      return date.toLocaleTimeString();
-    },
+    async onMessageReceived(text, displayname, time) {
+      if(displayname === undefined) { displayname = "System"; }
+      if(time === undefined) { time = new Date().toLocaleDateString(); }
+      this.messages.push({text, displayname, time}); 
+    }
   },  
   components: {
     ProfileAvatar,
@@ -191,15 +188,25 @@ input::placeholder {
   padding: 10px;
   background: rgba(61, 62, 63, 0.681);
 }
+.display-content {
+  display: flex;
+  align-items: center;
+}
+.displayname {
+  font-weight: bold;
+  margin-right: 10px;
+  color: white;
+}
 .message {
+
   margin-bottom: 10px;
   padding: 5px;
   border-radius: 5px;
-
+  color: white;
 }
 .time {
   float: right;
   font-size: 12px;
-  color: #868585;
+  color: white;
 }
 </style>

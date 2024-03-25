@@ -1,15 +1,22 @@
 <script setup>
 import UserProfileMessage from "../components/UserProfileMessage.vue"
-import ServerMessageBox from "../components/ServerMessageBox.vue"
+import UserProfile from "../components/UserProfile.vue"
+import MessageBox from "../components/MessageBox.vue"
+import MessageInput from "../components/MessageInput.vue"
+import signalRService from '../services/SignalRService.js';
+import axios from "axios";
+import store from '../store.js'
 </script>
 
 <template>
   <div class="wrapper">
-    <!-- <div class="message-box">
-      <ServerMessageBox />
-    </div> -->
-    <div id="userprofilmessage">
-      <UserProfileMessage />
+    <div class="flex">
+      <MessageBox id="messagebox"/>
+    </div>
+    <div class="flex">
+      <!-- <UserProfileMessage /> -->
+      <UserProfile id="userprofil"/>
+      <MessageInput id="messageinput"/>
     </div>
   </div>
 </template>
@@ -28,15 +35,13 @@ export default {
   overflow: hidden;
 }
 .wrapper {
-  width: 100vw;
-  height: 100vh;
   background: rgb(148, 147, 147);
 }
-#message-box {
-  position: relative;
+.flex {
+  display: flex;
+  align-items: center;
 }
-#userprofilmessage {
-  position: relative;
-  top: 9%;
+#messageinput, #messagebox {
+  flex-grow: 1;
 }
 </style>

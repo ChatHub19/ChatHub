@@ -43,6 +43,11 @@ class SignalRService {
       this.connection.off(type, callback);
   } 
 
+  async sendJoinedMessageToAll() {
+    if (!this.connected) { throw new Error("Invalid state. Not connected."); }
+    await this.connection.invoke("SendJoinedMessageToAll");
+  }
+
   async sendMessageToAll(text, displayname, time) {
     if (!this.connected) { throw new Error("Invalid state. Not connected."); }
     await this.connection.invoke("SendMessageToAll", text, displayname, time);
