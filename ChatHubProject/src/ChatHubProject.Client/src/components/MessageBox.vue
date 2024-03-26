@@ -21,8 +21,6 @@ import signalRService from '../services/SignalRService.js';
 <script>
 export default {
   async mounted() {
-    signalRService.configureConnection(); 
-		signalRService.connect();
     try { 
       signalRService.sendJoinedMessageToAll();
       signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); 

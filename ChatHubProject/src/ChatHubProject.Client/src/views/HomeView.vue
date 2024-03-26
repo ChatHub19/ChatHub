@@ -1,5 +1,6 @@
 <script setup>
 import UserProfileMessage from "../components/UserProfileMessage.vue"
+import LoaderComponent from "../components/LoaderComponent.vue"
 import UserProfile from "../components/UserProfile.vue"
 import MessageBox from "../components/MessageBox.vue"
 import MessageInput from "../components/MessageInput.vue"
@@ -9,7 +10,7 @@ import store from '../store.js'
 </script>
 
 <template>
-  <div class="wrapper">
+  <div class="wrapper" v-if="connected">
     <div class="flex">
       <MessageBox id="messagebox"/>
     </div>
@@ -19,11 +20,24 @@ import store from '../store.js'
       <MessageInput id="messageinput"/>
     </div>
   </div>
+  <div v-else>
+    <LoaderComponent />
+    {{ connected }}
+  </div>
 </template>
 
 <script>
 export default {
-
+  async mounted() {
+    signalRService.configureConnection(); 
+    await signalRService.connect();
+    this.connected = signalRService.connected;
+  },
+  data() {
+    return {
+      connected: false,
+    }
+  },
 }
 </script>
 

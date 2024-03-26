@@ -8,7 +8,7 @@ import signalRService from '../services/SignalRService.js';
   <div class="wrapper">
     <div class="flex">
       <div class="message-container">
-        <input type="text" v-model="accountModel.message" placeholder="Send Message" @keypress.enter="SendMessage()">
+        <input type="text" v-model="message" placeholder="Send Message" @keypress.enter="SendMessage()">
       </div>
     </div>
   </div>
@@ -16,58 +16,27 @@ import signalRService from '../services/SignalRService.js';
 
 <script>
 export default {
-  async mounted() {
-    signalRService.configureConnection(); 
-		signalRService.connect();
-    await this.getUserdata();
-    await this.getDisplayname();
-    try { 
-      signalRService.sendJoinedMessageToAll();
-      signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); 
-      signalRService.subscribeEvent("ReceiveJoinedMessage", this.onMessageReceived); 
-    } 
-    catch (e) { console.log(e); }    
-  },
-  unmounted() {
-    signalRService.unsubscribeEvent("ReceiveMessage", this.onMessageReceived);
-  },
   computed: {
     guid() {
       return this.$store.state.userdata.userGuid
-    },
-    displayname() {
-      return this.$store.state.userdata.displayname
-    },
+    }
   }, 
   data() {
     return {
-      accountModel: {
-        message: "",
-        displayname: "",
-      }
+      message: "",
     }
   }, 
   methods: {
-    async getUserdata() {
-      try {
-        var userdata = (await axios.get("user/userinfo")).data
-        store.commit("authenticate", userdata)
-      } 
-      catch (e) { e.response.data }
-    },
-    async getDisplayname() {
-      this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
-    },
     async SendMessage() {
-      if (this.accountModel.message !== "") { 
-        const text = this.accountModel.message;
-        const displayname = this.accountModel.displayname;
+      if (this.message !== "") { 
+        const text = this.message;
+        const displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
         const time = new Date().toLocaleTimeString();
         const userguid = this.guid; 
         (await axios.post("message/send", {text, userguid, time}));
         signalRService.sendMessageToAll(text, displayname, time);
       }
-      this.accountModel.message = "";
+      this.message = "";
     }
   },
 }
