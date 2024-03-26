@@ -59,7 +59,7 @@ export default {
 }
 .message-box {
   width: 100%;
-  height: 80vh;
+  height: 88.66vh;
   overflow-y: auto;
   border: 3px solid black;
   padding: 10px;
