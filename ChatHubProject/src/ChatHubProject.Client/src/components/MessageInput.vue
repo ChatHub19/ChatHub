@@ -1,6 +1,5 @@
 <script setup>
 import axios from "axios";
-import store from '../store.js'
 import signalRService from '../services/SignalRService.js';
 </script>
 

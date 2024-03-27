@@ -1,21 +1,19 @@
 <script setup>
-import UserProfileMessage from "../components/UserProfileMessage.vue"
 import LoaderComponent from "../components/LoaderComponent.vue"
+import SignalRUserList from "../components/SignalRUserList.vue"
 import UserProfile from "../components/UserProfile.vue"
 import MessageBox from "../components/MessageBox.vue"
 import MessageInput from "../components/MessageInput.vue"
 import signalRService from '../services/SignalRService.js';
-import axios from "axios";
-import store from '../store.js'
 </script>
 
 <template>
   <div class="wrapper" v-if="connected">
     <div class="flex">
+      <SignalRUserList id="userlist"/>
       <MessageBox id="messagebox"/>
     </div>
     <div class="flex">
-      <!-- <UserProfileMessage /> -->
       <UserProfile id="userprofil"/>
       <MessageInput id="messageinput"/>
     </div>

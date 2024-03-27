@@ -67,6 +67,12 @@ namespace ChatHubProject.Application.Infrastructure
                     password: "1234",
                     email: "user@gmail.com",
                     role: Userrole.Pupil.ToString()),
+                new User(
+                    username: "user2",
+                    displayname: "user2",
+                    password: "1234",
+                    email: "user2@gmail.com",
+                    role: Userrole.Pupil.ToString()),
             };
             await Users.AddRangeAsync(users);
             await SaveChangesAsync();
