@@ -10,7 +10,7 @@ namespace ChatHubProject.Webapi.Hubs
 
     public class MessageHub : Hub
     {
-        private readonly List<string?> _users = new();
+        private static readonly HashSet<string?> _users = new();
 
         public async Task SendJoinedMessageToAll()
         {
@@ -39,7 +39,7 @@ namespace ChatHubProject.Webapi.Hubs
 
         public async Task RequestConnectedUsers()
         {
-            await Clients.Caller.SendAsync("ReceiveConnectedUsers", _users);
+            await Clients.All.SendAsync("ReceiveConnectedUsers", _users);
         }
     }
 }

@@ -90,8 +90,8 @@ span {
 .avatar {
   display: flex;
   align-items: center;
-  border: 2px solid black;
-  width: fit-content;
+  justify-content: center;
+  width: 20vw;
   padding: .25rem;
   background: grey;
 }
