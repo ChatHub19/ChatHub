@@ -90,11 +90,13 @@ namespace ChatHubProject.Webapi.Controllers
             {
                 if (!user.CheckPassword(credentials.Password)) { return Unauthorized("Login failed! Invalid credentials!"); }
 
-                var role = Userrole.Pupil.ToString();
+                var role = user.Role;
+                var group = user.Group;
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+                    new Claim("Group", group ?? "No Group"),
                 };
                 var claimsidentity = new ClaimsIdentity
                 (
@@ -156,6 +158,7 @@ namespace ChatHubProject.Webapi.Controllers
                 {
                     new Claim(ClaimTypes.Name, currentUser.Cn),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+                    new Claim("Group", group),
                 };
                 var claimsidentity = new ClaimsIdentity
                 (
@@ -186,11 +189,10 @@ namespace ChatHubProject.Webapi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto credentials)
         {
-            var role = Userrole.Pupil.ToString();
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.Email);
             if (user is null)
             {   
-                user = new User(credentials.Username, credentials.Username, credentials.Password, credentials.Email, role);
+                user = new User(credentials.Username, credentials.Username, credentials.Password, credentials.Email, Userrole.Pupil.ToString());
                 await _db.Users.AddAsync(user);
                 try { await _db.SaveChangesAsync(); }
                 catch (DbUpdateException) { return BadRequest(); }
@@ -198,10 +200,14 @@ namespace ChatHubProject.Webapi.Controllers
             else { return BadRequest("User is already in the database."); }
             if (!user.CheckPassword(credentials.Password)) { return Unauthorized("Login failed! Invalid credentials!"); }
 
+            var role = user.Role;
+            var group = user.Group;
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username.ToString()),
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+                new Claim("Group", group ?? "No Group"),
             };
             var claimsidentity = new ClaimsIdentity
             (
@@ -225,6 +231,7 @@ namespace ChatHubProject.Webapi.Controllers
                 user.Guid,
                 user.Email,
                 user.Role,
+                user.Group,
             });
         }
 

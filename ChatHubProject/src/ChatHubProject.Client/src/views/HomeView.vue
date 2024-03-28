@@ -1,22 +1,41 @@
 <script setup>
-import UserProfileMessage from "../components/UserProfileMessage.vue"
-import ServerMessageBox from "../components/ServerMessageBox.vue"
+import LoaderComponent from "../components/LoaderComponent.vue"
+import SignalRUserList from "../components/SignalRUserList.vue"
+import UserProfile from "../components/UserProfile.vue"
+import MessageBox from "../components/MessageBox.vue"
+import MessageInput from "../components/MessageInput.vue"
+import signalRService from '../services/SignalRService.js';
 </script>
 
 <template>
-  <div class="wrapper">
-    <!-- <div class="message-box">
-      <ServerMessageBox />
-    </div> -->
-    <div id="userprofilmessage">
-      <UserProfileMessage />
+  <div class="wrapper" v-if="connected">
+    <div class="flex">
+      <SignalRUserList id="userlist"/>
+      <MessageBox id="messagebox"/>
     </div>
+    <div class="flex">
+      <UserProfile id="userprofil"/>
+      <MessageInput id="messageinput"/>
+    </div>
+  </div>
+  <div v-else>
+    <LoaderComponent />
+    {{ connected }}
   </div>
 </template>
 
 <script>
 export default {
-
+  async mounted() {
+    signalRService.configureConnection(); 
+    await signalRService.connect();
+    this.connected = signalRService.connected;
+  },
+  data() {
+    return {
+      connected: false,
+    }
+  },
 }
 </script>
 
@@ -28,15 +47,13 @@ export default {
   overflow: hidden;
 }
 .wrapper {
-  width: 100vw;
-  height: 100vh;
   background: rgb(148, 147, 147);
 }
-#message-box {
-  position: relative;
+.flex {
+  display: flex;
+  align-items: center;
 }
-#userprofilmessage {
-  position: relative;
-  top: 9%;
+#messageinput, #messagebox {
+  flex-grow: 1;
 }
 </style>
