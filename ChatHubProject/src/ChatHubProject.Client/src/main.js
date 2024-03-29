@@ -37,6 +37,7 @@ axios.defaults.baseURL =
   process.env.NODE_ENV == "production" ? "/api" : "https://localhost:7081/api";
 axios.defaults.withCredentials = true;
 const app = createApp(App);
+const app = createApp(App);
 
 axios
   .get("user/userinfo")
