@@ -11,10 +11,12 @@ import signalRService from '../services/SignalRService.js';
   <div class="wrapper" v-if="connected">
     <div class="flex">
       <SignalRUserList id="userlist"/>
+      <!-- Todo: Replace MessageBox with PrivateMessageBox component -->
       <MessageBox id="messagebox"/>
     </div>
     <div class="flex">
       <UserProfile id="userprofil"/>
+      <!-- Todo: Replace MessageInput with PrivateMessageInput component -->
       <MessageInput id="messageinput"/>
     </div>
   </div>
