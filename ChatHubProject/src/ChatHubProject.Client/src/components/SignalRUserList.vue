@@ -7,9 +7,9 @@ import signalRService from '../services/SignalRService.js';
     <div class="container">
       <div class="userlist">
         <span> User </span>
-        <div v-for="(user, index) in userlists" :key="index" class="list">
-          <p class="displayname" v-if="user !== displayname" @click="selectUser(user)"> 
-          {{ user }} 
+        <div v-for="(value, key) in userlists" :key="key" class="list">
+          <p class="displayname" v-if="key !== displayname" @click="selectUser(value, key)"> 
+          {{ key }}
           </p> 
         </div>
       </div>
@@ -23,7 +23,7 @@ export default {
     try { signalRService.subscribeEvent("ReceiveConnectedUsers", this.onUsersReceived); } 
     catch (e) { console.log(e); }    
   },
-  unmounted() {
+  async unmounted() {
     signalRService.unsubscribeEvent("ReceiveConnectedUsers", this.onUsersReceived);
   }, 
   computed: {
@@ -38,12 +38,11 @@ export default {
   }, 
   methods: {
     async onUsersReceived(user) {
-      if(this.userlists.some(u => u === user)) return;
       this.userlists = user;
     },
-    selectUser(user) {
+    selectUser(connectionid, user) {
       this.$router.push(`/chatroom/${user}`);
-      alert(signalRService.connection.connectionId);
+      alert(connectionid);
     }
   }
 }

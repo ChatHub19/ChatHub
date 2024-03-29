@@ -28,7 +28,7 @@ export default {
     } 
     catch (e) { console.log(e); }    
   },
-  unmounted() {
+  async unmounted() {
     signalRService.unsubscribeEvent("ReceiveMessage", this.onMessageReceived);
     signalRService.unsubscribeEvent("ReceiveJoinedMessage", this.onMessageReceived);
   }, 
