@@ -17,17 +17,10 @@ namespace ChatHubProject.Application.Infrastructure
         public DbSet<User> Users => Set<User>();
         public DbSet<Message> Messages => Set<Message>();
 
+        public DbSet<Server> Servers => Set<Server>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Handin>().HasIndex("TaskId", "StudentId").IsUnique();
-            //modelBuilder.Entity<Task>().HasIndex(nameof(Task.Title), "TeamId").IsUnique();
-            //// Es sollen DateTimeKind UTC beim zurücklesen gesetzt werden.
-            //modelBuilder.Entity<Task>()
-            //    .Property(t => t.ExpirationDate)
-            //    .HasConversion(
-            //        v => v,   // 1:1 in die DB schreiben
-            //        v => new DateTime(v.Ticks, DateTimeKind.Utc));  // auslesen als UTC
-
             // Generic config for all entities
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
