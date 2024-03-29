@@ -36,8 +36,8 @@ const Modal = {
             <div v-show="showMainIconText" class="main-icon-text">Server hinzufügen</div>
             <div v-for="server in servers" :key="server.name" id="server-item">
                 <img
-                    v-if="server.icon"
-                    :src="createObjectURL(server.icon)"
+                    v-if="server.imageFilename"
+                    :src="`${baseUrl}/uploaded_files/${server.imageFilename}`"
                     class="servers-icon"
                     @mouseover="showServerTooltip(server.name)"
                     @mouseleave="hideServerTooltip"
@@ -84,12 +84,19 @@ const Modal = {
                     style="display: none"
                     @change="handleFileUpload"
                 />
-                <button @click="uploadServerProfile" id="uploadButton" :disabled="isUploadDisabled">
-                    Upload Image
-                </button>
-                <span v-if="uploadedFileName" id="successUploadProfile">{{
-                    uploadedFileName
-                }}</span>
+                <div class="uploadContainer">
+                    <button
+                        @click="uploadServerProfile"
+                        id="uploadButton"
+                        :disabled="isUploadDisabled"
+                    >
+                        Upload Image
+                    </button>
+                    <span v-if="uploadedFileName" id="successUploadProfile">{{
+                        uploadedFileName
+                    }}</span>
+                </div>
+
                 <div class="bottomHalf">
                     <span v-if="duplicateError" id="error-message">Name bereits vorhanden</span>
                     <button
@@ -108,11 +115,18 @@ const Modal = {
 
 <script>
 export default {
+    async mounted() {
+        await this.getAllServers();
+    },
     methods: {
+        async getAllServers() {
+            this.servers = (await axios.get('server/all_servers')).data;
+        },
         setHoverEffect(value) {
             this.isHovering = value;
         },
         createObjectURL(icon) {
+            console.log(icon);
             return URL.createObjectURL(icon);
         },
         handleDocumentClick(event) {
@@ -137,21 +151,25 @@ export default {
             });
         },
         editServerProfile(server) {
+            this.serverGuid = server.guid;
             this.isModalOpen = true;
             this.editMode = true;
             this.serverToEdit = server;
             this.serverName = server.name;
+
             this.hideContextMenu();
 
             this.$nextTick(() => {
                 this.$refs.serverNameInput.focus();
             });
         },
-        removeServer(server) {
-            const index = this.servers.indexOf(server);
-            if (index !== -1) {
-                this.servers.splice(index, 1);
-            }
+        async removeServer(server) {
+            await axios.delete(`server/delete_server`, {
+                params: {
+                    guid: server.guid,
+                },
+            });
+            this.getAllServers();
             this.hideContextMenu();
         },
         closeServer() {
@@ -164,30 +182,44 @@ export default {
             if (this.serverName && this.serverName.trim() !== '') {
                 const newServer = {
                     name: this.serverName.trim(),
-                    icon: this.selectedFile,
-                    // guid: this.$store.state.user.guid,
+                    imageFilename: this.selectedFile,
+                    userGuid: this.$store.state.user.guid,
                 };
-                this.servers.push(newServer);
-                // try {
-                //     console.log(newServer);
-                //     const serverdata = await axios.post('server/add_server', newServer);
-                // } catch (e) {}
+                let formData = new FormData();
+                formData.append('name', newServer.name);
+                formData.append('userguid', newServer.userGuid);
+                formData.append('file', newServer.imageFilename);
+                const response = await axios.post('server/add_server', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                await this.getAllServers();
             }
             this.editMode = false;
             this.isModalOpen = false;
         },
-        saveEditServer() {
+        async saveEditServer() {
             if (this.serverName && this.serverName.trim() !== '') {
                 const editedServer = {
                     name: this.serverName.trim(),
-                    icon: this.selectedFile,
+                    imageFilename: this.selectedFile,
+                    userGuid: this.$store.state.user.guid,
+                    guid: this.serverGuid,
                 };
-                const index = this.servers.findIndex((s) => s === this.serverToEdit);
-                if (index !== -1) {
-                    this.servers[index].name = editedServer.name;
-                    this.servers[index].icon = editedServer.icon;
-                }
+                let formData = new FormData();
+                formData.append('name', editedServer.name);
+                formData.append('userGuid', editedServer.userGuid);
+                formData.append('file', this.selectedFile);
+                formData.append('guid', this.serverGuid);
+                console.log(formData);
+                await axios.put(`server/edit_server/${this.serverGuid}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
             }
+            await this.getAllServers();
             this.isModalOpen = false;
             this.editMode = false;
         },
@@ -210,6 +242,7 @@ export default {
             server.showContextMenu = true;
         },
         hideContextMenu() {
+            if (this.servers == null) return;
             this.servers.forEach((server) => {
                 server.showContextMenu = false;
             });
@@ -217,11 +250,13 @@ export default {
 
         handleInput(event) {
             let inputValue = event.target.value;
-            const isDuplicate = this.servers.some(
-                (server) =>
-                    server !== this.serverToEdit &&
-                    server.name.trim().toLowerCase() === inputValue.trim().toLowerCase()
-            );
+            const isDuplicate =
+                this.servers != null &&
+                this.servers.some(
+                    (server) =>
+                        server !== this.serverToEdit &&
+                        server.name.trim().toLowerCase() === inputValue.trim().toLowerCase()
+                );
             this.isUploadDisabled = inputValue === '' || isDuplicate;
             this.duplicateError = isDuplicate;
             this.isSaveDisabled = this.isUploadDisabled || !this.selectedFile;
@@ -246,7 +281,9 @@ export default {
     },
     data() {
         return {
-            servers: [],
+            baseUrl: 'https://localhost:7081',
+            servers: null,
+            serverGuid: null,
             editMode: false,
             serverToEdit: null,
             isModalOpen: false,
@@ -413,12 +450,14 @@ export default {
 }
 
 #description {
+    font-size: 1.2rem;
     color: #8c8c8c;
     line-height: 20px;
     padding-bottom: 1rem;
 }
 
 #name {
+    font-size: 1.25rem;
     color: #50535a;
     font-weight: bold;
 }
@@ -441,13 +480,22 @@ export default {
     padding: 10px;
 }
 
+.uploadContainer {
+    display: flex;
+    flex-direction: row;
+}
+
 #uploadButton {
+    border: 1px solid #50535a;
+    border-radius: 10px;
+    width: 25%;
     margin: 0rem 0rem 3.5rem 0rem;
     font-size: 17px;
     font-family: 'Nunito Sans';
 }
 
 #successUploadProfile {
+    width: 10%;
     padding-left: 0.5rem;
     opacity: 0.5;
     font-size: 17px;
@@ -472,6 +520,9 @@ export default {
 }
 
 #saveButton {
+    border: 1px solid #50535a;
+    border-radius: 10px;
+    width: 12.5%;
     font-size: 17px;
     font-family: 'Nunito Sans';
 }

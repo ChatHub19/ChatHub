@@ -57,7 +57,7 @@ namespace ChatHubProject.Application.Infrastructure
             {
                 new User(
                     username: "admin",
-                    password: "Password1234!",
+                    password: "1234",
                     email: "admin@gmail.com",
                     role: Userrole.Administration.ToString()),
                 new User(
@@ -96,14 +96,13 @@ namespace ChatHubProject.Application.Infrastructure
                 return new Server(
                     name: f.Name.FullName(),
                     creator: f.Random.ListItem(users),
-                    maxCapacity: f.Random.Number(3, 50),
-                    description: string.Join("", f.Lorem.Sentence().Split().TakeWhile((word, index) => index < 300)))
+                    imageFilename: f.Random.String2(10, "0123456789ABCDEF"))
                 { Guid = f.Random.Guid() };
             })
             .Generate(15)
             .GroupBy(s => s.Name).Select(g => g.First())
             .ToList();
-            await Servers.AddRangeAsync(servers);
+            // await Servers.AddRangeAsync(servers);
             await SaveChangesAsync();
         }
 

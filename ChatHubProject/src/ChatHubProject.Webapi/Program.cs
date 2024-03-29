@@ -10,6 +10,8 @@ using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,7 +98,12 @@ if (app.Environment.IsDevelopment())
 
 // Liefert die statischen Dateien, die von VueJS generiert werden, aus.
 app.UseStaticFiles();
-
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, app.Configuration["UploadFilePath"] ?? "uploaded_files")),
+    RequestPath = "/uploaded_files"
+});
 // Ab hier werden alle calls bearbeitet, die an die api gehen.
 app.UseAuthentication();
 app.UseAuthorization();

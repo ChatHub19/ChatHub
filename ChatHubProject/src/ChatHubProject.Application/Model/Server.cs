@@ -13,11 +13,11 @@ namespace ChatHubProject.Application.Model
         protected Server() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        public Server(string name, User creator)
+        public Server(string name, User creator, string imageFilename)
         {
             Name = name;
-            // Icon = icon;
             User = creator;
+            ImageFilename = imageFilename;
         }
 
         public int Id { get; set; }
@@ -25,8 +25,7 @@ namespace ChatHubProject.Application.Model
         public Guid Guid { get; set; }
 
         public string Name { get; set; }
-
-        // public File Icon { get; set; }
+        public string ImageFilename { get; set; }
 
         public User User { get; set; }
 
