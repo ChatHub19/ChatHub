@@ -38,6 +38,8 @@ const Modal = {
                 <img
                     v-if="server.imageFilename"
                     :src="`${baseUrl}/uploaded_files/${server.imageFilename}`"
+                    v-if="server.imageFilename"
+                    :src="`${baseUrl}/uploaded_files/${server.imageFilename}`"
                     class="servers-icon"
                     @mouseover="showServerTooltip(server.name)"
                     @mouseleave="hideServerTooltip"
@@ -96,6 +98,7 @@ const Modal = {
                         uploadedFileName
                     }}</span>
                 </div>
+
                 <div class="bottomHalf">
                     <span v-if="duplicateError" id="error-message">Name bereits vorhanden</span>
                     <button
@@ -117,7 +120,13 @@ export default {
     async mounted() {
         await this.getAllServers();
     },
+    async mounted() {
+        await this.getAllServers();
+    },
     methods: {
+        async getAllServers() {
+            this.servers = (await axios.get('server/all_servers')).data;
+        },
         async getAllServers() {
             this.servers = (await axios.get('server/all_servers')).data;
         },
