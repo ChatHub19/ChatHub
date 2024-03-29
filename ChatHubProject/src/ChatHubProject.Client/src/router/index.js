@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import CustomView from '../views/CustomView.vue'
+import ChatRoomView from '../views/ChatRoomView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +30,12 @@ const router = createRouter({
       name: 'custom',
       component: CustomView,
       meta: { authorize: true },
+    },
+    {
+      path: '/chatroom/:user',
+      name: 'chatroom/:user',
+      component: ChatRoomView,
+      meta: { authorize: true }
     },
   ]
 })

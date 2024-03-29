@@ -8,11 +8,7 @@ import signalRService from '../services/SignalRService.js';
       <div class="userlist">
         <span> User </span>
         <div v-for="(user, index) in userlists" :key="index" class="list">
-          <p 
-            class="displayname" 
-            v-if="user !== displayname"
-            @click="selectUser(user)"
-          > 
+          <p class="displayname" v-if="user !== displayname" @click="selectUser(user)"> 
           {{ user }} 
           </p> 
         </div>
@@ -46,7 +42,8 @@ export default {
       this.userlists = user;
     },
     selectUser(user) {
-      alert(user);
+      this.$router.push(`/chatroom/${user}`);
+      alert(signalRService.connection.connectionId);
     }
   }
 }

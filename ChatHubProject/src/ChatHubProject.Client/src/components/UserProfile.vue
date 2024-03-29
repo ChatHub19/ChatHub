@@ -12,7 +12,10 @@ import ProfileAvatar from "vue-profile-avatar";
         <span> {{ displayname }} </span>
         <span> {{ status }} </span>
       </div>
-      <router-link class="redirect-btn" to="/login" @click="logout()"> 
+      <router-link v-if="this.$route.name === 'home'" class="redirect-btn" to="/login" @click="logout()"> 
+        <div class="option"> <font-awesome-icon icon="fa-solid fa-caret-left" /> </div> 
+      </router-link> 
+      <router-link v-else class="redirect-btn" to="/"> 
         <div class="option"> <font-awesome-icon icon="fa-solid fa-caret-left" /> </div> 
       </router-link> 
       <router-link class="redirect-btn" to="/custom"> 
@@ -41,7 +44,8 @@ export default {
     },
     authenticated() {
       return this.$store.state.isLoggedIn
-    }
+    },
+
   }, 
   data() {
     return {
