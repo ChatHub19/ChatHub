@@ -1,5 +1,6 @@
 <script setup>
 import signalRService from '../services/SignalRService.js';
+import EditMessageButton from './EditMessageButton.vue';
 </script>
 
 <template>
@@ -11,7 +12,9 @@ import signalRService from '../services/SignalRService.js';
             <p class="displayname"> {{ message.displayname }} </p>
             <p class="time"> {{ message.time }} </p>
           </div>
-          <p> {{ message.text }} </p> 
+          <div class="flex"> <p> {{ message.text }}</p><EditMessageButton id="editMessageButton"/> </div>
+         
+           
         </div>
       </div>
     </div>
@@ -83,5 +86,10 @@ export default {
   float: right;
   font-size: 12px;
   color: white;
+}
+#editMessageButton{
+ font-weight: bold;
+ margin-left: auto;
+
 }
 </style>

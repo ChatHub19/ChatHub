@@ -1,19 +1,16 @@
 using AutoMapper;
 using Castle.Core.Configuration;
-using Castle.Core.Configuration;
 using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using ChatHubProject.Application.Model;
-using ChatHubProject.Webapi.Dto;
 using ChatHubProject.Webapi.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
-using System.IO;
+
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,10 +38,10 @@ public class ServerController : ControllerBase
             {
                 s.Name,
                 s.ImageFilename,
-                s.ImageFilename,
+               
                 UserGuid = s.User.Guid,
                 Guid = s.Guid,
-                Guid = s.Guid,
+               
             }).ToList();
         return Ok(servers);
     }
@@ -66,7 +63,6 @@ public class ServerController : ControllerBase
 
     [HttpPost("add_server")]
     public async Task<IActionResult> AddServer([FromForm] NewServerCmd serverCmd)
-    public async Task<IActionResult> AddServer([FromForm] NewServerCmd serverCmd)
     {
         if (serverCmd.File is null) return BadRequest();
         if (serverCmd.File.Length > 1 << 20) return BadRequest();
@@ -82,21 +78,17 @@ public class ServerController : ControllerBase
         var server = new Server(serverCmd.Name, user, filename);
         if (serverCmd.File is null) return BadRequest();
         if (serverCmd.File.Length > 1 << 20) return BadRequest();
-        var filename = $"{serverCmd.Name + '_' + serverCmd.File.FileName}";
         using (var filestream = serverCmd.File.OpenReadStream())
         using (var destFileStream = new FileStream(Path.Combine(_uploadPath, filename), FileMode.Create, FileAccess.Write))
         {
             await filestream.CopyToAsync(destFileStream);
         }
 
-        var user = _db.Users.First(u => u.Guid == serverCmd.UserGuid);
-        if (user is null) return BadRequest();
-        var server = new Server(serverCmd.Name, user, filename);
         await _db.Servers.AddAsync(server);
         try { await _db.SaveChangesAsync(); }
         catch (DbUpdateException) { return BadRequest(); }
         return Ok(new { server.Guid, server.Name });
-        return Ok(new { server.Guid, server.Name });
+     
     }
 
     [HttpDelete("delete_server")]
@@ -115,8 +107,7 @@ public class ServerController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("edit_server/{guid}")]
-    public async Task<IActionResult> EditServer(Guid guid, [FromForm] EditServerCmd serverCmd)
+
     [HttpPut("edit_server/{guid}")]
     public async Task<IActionResult> EditServer(Guid guid, [FromForm] EditServerCmd serverCmd)
     {

@@ -38,8 +38,6 @@ const Modal = {
                 <img
                     v-if="server.imageFilename"
                     :src="`${baseUrl}/uploaded_files/${server.imageFilename}`"
-                    v-if="server.imageFilename"
-                    :src="`${baseUrl}/uploaded_files/${server.imageFilename}`"
                     class="servers-icon"
                     @mouseover="showServerTooltip(server.name)"
                     @mouseleave="hideServerTooltip"
