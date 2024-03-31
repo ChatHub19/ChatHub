@@ -12,7 +12,9 @@ import videoService from '../services/VideoService.js';
             <p class="displayname"> {{ message.displayname }} </p>
             <p class="time"> {{ message.time }} </p>
           </div>
-          <p> {{ message.text }} </p> 
+          <div class="flex"> <p> {{ message.text }}</p><EditMessageButton id="editMessageButton"/> </div>
+         
+           
         </div>
       </div>
     </div>
