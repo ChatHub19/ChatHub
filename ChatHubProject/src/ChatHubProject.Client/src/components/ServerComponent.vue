@@ -11,29 +11,14 @@ const Modal = {
     },
     setup(props) {
         const serverName = ref(props.editMode ? props.serverToEdit.name : '');
-    props: {
-        editMode: Boolean,
-        serverToEdit: Object,
-    },
-    setup(props) {
-        const serverName = ref(props.editMode ? props.serverToEdit.name : '');
 
         const closeServer = () => {
             isModalOpen.value = false;
-        };
-        const closeServer = () => {
-            isModalOpen.value = false;
-        };
-
-        const saveServer = () => {
-            closeServer();
         };
         const saveServer = () => {
             closeServer();
         };
 
-        return { serverName, closeServer, saveServer };
-    },
         return { serverName, closeServer, saveServer };
     },
 };
@@ -183,31 +168,10 @@ const Modal = {
                 </div>
             </div>
         </div>
-    </div>
 </template>
 
 <script>
 export default {
-    async mounted() {
-        await this.getAllServers();
-        document.addEventListener('click', this.handleDocumentClick);
-    },
-    beforeUnmount() {
-        document.removeEventListener('click', this.handleDocumentClick);
-    },
-    methods: {
-        handleDocumentClick(event) {
-            const isOutside = !event.target.closest('.server-context-menu');
-            if (isOutside) {
-                this.hideContextMenu();
-            }
-        },
-        async getAllServers() {
-            this.servers = (await axios.get('server/all_servers')).data;
-        },
-        setHoverEffect(value) {
-            this.isHovering = value;
-        },
     async mounted() {
         await this.getAllServers();
         document.addEventListener('click', this.handleDocumentClick);
@@ -237,6 +201,7 @@ export default {
             this.isUploadDisabled = true;
             this.isSaveDisabled = true;
             this.hideContextMenu();
+        },
         addServer() {
             this.serverName = '';
             this.isModalOpen = true;
@@ -693,26 +658,9 @@ export default {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background: #00000080;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
 }
 
 .modal-content {
-    position: absolute;
-    width: 35rem;
-    font-family: 'Nunito Sans';
-    color: #000;
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
     position: absolute;
     width: 35rem;
     font-family: 'Nunito Sans';
@@ -726,9 +674,6 @@ export default {
     font-size: 30px;
     font-weight: bold;
     text-align: center;
-    font-size: 30px;
-    font-weight: bold;
-    text-align: center;
 }
 
 #description {
@@ -736,16 +681,9 @@ export default {
     color: #8c8c8c;
     line-height: 20px;
     padding-bottom: 1rem;
-    font-size: 1.2rem;
-    color: #8c8c8c;
-    line-height: 20px;
-    padding-bottom: 1rem;
 }
 
 #name {
-    font-size: 1.25rem;
-    color: #50535a;
-    font-weight: bold;
     font-size: 1.25rem;
     color: #50535a;
     font-weight: bold;
@@ -757,22 +695,12 @@ export default {
     height: 2.5rem;
     width: 100%;
     margin-bottom: 1.5rem;
-    background: #f0ecec;
-    border-style: none;
-    height: 2.5rem;
-    width: 100%;
-    margin-bottom: 1.5rem;
 }
 
 .input:focus {
     outline: none;
-    outline: none;
 }
 
-.input[type='text'] {
-    font-size: 18px;
-    color: #50535a;
-    padding: 10px;
 .input[type='text'] {
     font-size: 18px;
     color: #50535a;
@@ -780,8 +708,6 @@ export default {
 }
 
 .uploadContainer {
-    display: flex;
-    flex-direction: row;
     display: flex;
     flex-direction: row;
 }
@@ -793,20 +719,9 @@ export default {
     margin: 0rem 0rem 3.5rem 0rem;
     font-size: 17px;
     font-family: 'Nunito Sans';
-    border: 1px solid #50535a;
-    border-radius: 10px;
-    width: 25%;
-    margin: 0rem 0rem 3.5rem 0rem;
-    font-size: 17px;
-    font-family: 'Nunito Sans';
 }
 
 #successUploadProfile {
-    width: 10%;
-    padding-left: 0.5rem;
-    opacity: 0.5;
-    font-size: 17px;
-    font-family: 'Nunito Sans';
     width: 10%;
     padding-left: 0.5rem;
     opacity: 0.5;
@@ -823,31 +738,15 @@ export default {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    background: #f0ecec;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    padding: 1rem;
-    margin: 0px -20px -20px -20px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
 }
 
 #error-message {
     color: #ff0000;
     margin-right: auto;
     margin-left: 0.4em;
-    color: #ff0000;
-    margin-right: auto;
-    margin-left: 0.4em;
 }
 
 #saveButton {
-    border: 1px solid #50535a;
-    border-radius: 10px;
-    width: 12.5%;
-    font-size: 17px;
-    font-family: 'Nunito Sans';
     border: 1px solid #50535a;
     border-radius: 10px;
     width: 12.5%;
