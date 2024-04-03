@@ -16,7 +16,6 @@ const Modal = {
         const closeServer = () => {
             isModalOpen.value = false;
         };
-
         const saveServer = () => {
             closeServer();
         };
@@ -137,20 +136,11 @@ export default {
             }
         },
         async getAllServers() {
-            this.servers = (
-                await axios.get('server/all_userServers', {
-                    params: {
-                        userGuid: this.$store.state.userdata.userGuid,
-                    },
-                })
-            ).data;
-            console.log(this.servers);
             this.servers = (await axios.get('server/all_servers')).data;
         },
         setHoverEffect(value) {
             this.isHovering = value;
         },
-
         addServer() {
             this.serverName = '';
             this.isModalOpen = true;
@@ -159,10 +149,6 @@ export default {
             this.isUploadDisabled = true;
             this.isSaveDisabled = true;
             this.hideContextMenu();
-
-            this.$nextTick(() => {
-                this.$refs.serverNameInput.focus();
-            });
         },
         editServerProfile(server) {
             this.serverGuid = server.guid;
