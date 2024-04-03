@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="uploaded_files\" />
 	  <Folder Include="wwwroot\" />
 	</ItemGroup>
 

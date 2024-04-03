@@ -58,7 +58,7 @@ export default {
   width: 20vw;
   height: 89.1vh;
   padding: 10px;
-  background: #4a4a4a;
+  background: #302c34;
   color: white;
 }
 .userlist {

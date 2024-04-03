@@ -62,7 +62,7 @@ export default {
   height: 89.1vh;
   overflow-y: auto;
   padding: 10px;
-  background: rgba(61, 62, 63, 0.681);
+  background: #38343c;
 }
 .display-content {
   display: flex;
