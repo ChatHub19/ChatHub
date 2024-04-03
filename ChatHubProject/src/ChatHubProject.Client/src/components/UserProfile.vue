@@ -90,14 +90,15 @@ export default {
 }
 span {
   margin-left: 10px;
+  color: white;
 }
 .avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20vw;
+  width: calc(20vw + 65px);
   padding: .25rem;
-  background: grey;
+  background: #28242c;
 }
 .option {
   display: flex;
@@ -108,7 +109,7 @@ span {
   width: 3rem;
   height: 3rem;
   margin: 5px;
-  background: lightgrey;
+  background: lightgrey;;
 }
 .option:hover {
   background: rgba(211, 211, 211, 0.578);

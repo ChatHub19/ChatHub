@@ -1,13 +1,18 @@
 <script setup>
 import axios from "axios";
-import signalRService from '../services/SignalRService.js';
+import signalRService from "../services/SignalRService.js";
 </script>
 
 <template>
   <div class="wrapper">
     <div class="flex">
       <div class="message-container">
-        <input type="text" v-model="message" placeholder="Send Message" @keypress.enter="SendMessage()">
+        <input
+          type="text"
+          v-model="message"
+          placeholder="Enter Message"
+          @keypress.enter="SendMessage()"
+        />
       </div>
     </div>
   </div>
@@ -17,28 +22,29 @@ import signalRService from '../services/SignalRService.js';
 export default {
   computed: {
     guid() {
-      return this.$store.state.userdata.userGuid
-    }
-  }, 
+      return this.$store.state.userdata.userGuid;
+    },
+  },
   data() {
     return {
       message: "",
-    }
-  }, 
+    };
+  },
   methods: {
     async SendMessage() {
-      if (this.message !== "") { 
+      if (this.message !== "") {
         const text = this.message;
-        const displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
+        const displayname = (await axios.get(`/user/${this.guid}`)).data
+          .displayname;
         const time = new Date().toLocaleTimeString();
-        const userguid = this.guid; 
-        (await axios.post("message/send", {text, userguid, time}));
+        const userguid = this.guid;
+        await axios.post("message/send", { text, userguid, time });
         signalRService.sendMessageToAll(text, displayname, time);
       }
       this.message = "";
-    }
+    },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -52,11 +58,20 @@ input {
   margin: 0 10px;
   color: black;
   padding: 10px;
-  border-radius: 25px;
-  background: lightgrey;
+  border-radius: 10px;
+  border: 0;
+  background: #403c44;
 }
-input::placeholder {
-  color: black;
+
+input:focus {
+  color: white;
+  outline: none;
+}
+
+input:focus::placeholder {
+  outline: none;
+  color: gray;
+  color: transparent;
 }
 .flex {
   display: flex;

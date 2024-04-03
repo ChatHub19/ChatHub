@@ -17,6 +17,5 @@ export default createStore({
       state.isLoggedIn = true;
     },
   },
-  },
 });
 

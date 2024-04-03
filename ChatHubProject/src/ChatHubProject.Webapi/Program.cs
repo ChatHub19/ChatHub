@@ -98,9 +98,6 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCookiePolicy();
 
-// Liefert die statischen Dateien, die von VueJS generiert werden, aus.
-app.UseStaticFiles();
-
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
