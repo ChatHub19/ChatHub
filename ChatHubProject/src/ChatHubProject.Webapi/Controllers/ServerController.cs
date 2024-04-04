@@ -38,6 +38,22 @@ public class ServerController : ControllerBase
         return Ok(servers);
     }
 
+    [HttpGet("all_userServers")]
+    public IActionResult GetAllServersFromUser(Guid userGuid)
+    {
+        var servers = _db.Servers
+            .Where(s => s.User.Guid == userGuid)
+            .OrderBy(s => s.Name)
+            .Select(s => new
+            {
+                s.Name,
+                s.ImageFilename,
+                UserGuid = s.User.Guid,
+                s.Guid,
+            }).ToList();
+        return Ok(servers);
+    }
+
     [HttpGet("one_server")]
     public async Task<IActionResult> GetOneServer(Guid guid)
     {
