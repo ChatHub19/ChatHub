@@ -1,8 +1,12 @@
 <script setup>
+import FriendRequest from '../component/FriendRequest.vue'
 </script>
 
 <template>
-  <h1> Homepage in progress ❤️😍❤️</h1>
+  <div>
+    <h1> Homepage in progress ❤️😍❤️</h1>
+      <FriendRequest />
+  </div>
 </template>
 
 <script>
