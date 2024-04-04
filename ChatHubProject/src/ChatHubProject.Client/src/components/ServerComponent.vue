@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
+
 const Modal = {
     props: {
         editMode: Boolean,
@@ -11,12 +12,15 @@ const Modal = {
     },
     setup(props) {
         const serverName = ref(props.editMode ? props.serverToEdit.name : '');
+
         const closeServer = () => {
             isModalOpen.value = false;
         };
+
         const saveServer = () => {
             closeServer();
         };
+
         return { serverName, closeServer, saveServer };
     },
 };
@@ -133,6 +137,14 @@ export default {
             }
         },
         async getAllServers() {
+            this.servers = (
+                await axios.get('server/all_userServers', {
+                    params: {
+                        userGuid: this.$store.state.userdata.userGuid,
+                    },
+                })
+            ).data;
+            console.log(this.servers);
             this.servers = (await axios.get('server/all_servers')).data;
         },
         setHoverEffect(value) {
