@@ -12,14 +12,12 @@ const Modal = {
     },
     setup(props) {
         const serverName = ref(props.editMode ? props.serverToEdit.name : '');
-
         const closeServer = () => {
             isModalOpen.value = false;
         };
         const saveServer = () => {
             closeServer();
         };
-
         return { serverName, closeServer, saveServer };
     },
 };
