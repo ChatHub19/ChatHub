@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
 
 const Modal = {
     props: {
@@ -42,12 +45,14 @@ const Modal = {
                     @mouseover="showServerTooltip(server.name)"
                     @mouseleave="hideServerTooltip"
                     @contextmenu.prevent="showContextMenu(server)"
+                    @click="this.$router.push(`/${server.userGuid}/server/${server.name}`)"
                 />
                 <div v-show="server.showTooltip && !server.showContextMenu" class="server-tooltip">
                     {{ server.name }}
                 </div>
                 <div v-show="server.showContextMenu" class="server-context-menu">
                     <span @click="editServerProfile(server)">Serverprofil bearbeiten</span>
+                    <span @click="copyServerLink(server)">Link kopieren</span>
                     <span
                         class="removeServer"
                         @click="removeServer(server)"
@@ -140,6 +145,7 @@ export default {
                 })
             ).data;
             console.log(this.servers);
+            this.servers = (await axios.get('server/all_servers')).data;
         },
         setHoverEffect(value) {
             this.isHovering = value;
@@ -170,6 +176,12 @@ export default {
             this.$nextTick(() => {
                 this.$refs.serverNameInput.focus();
             });
+        },
+        copyServerLink(server) {
+            const serverLink = `${this.devUrl}/${server.userGuid}/server/${server.name}`;
+            navigator.clipboard.writeText(serverLink);
+            this.hideContextMenu();
+            toast.info('Copied server link to clipboard!');
         },
         async removeServer(server) {
             await axios.delete(`server/delete_server`, {
@@ -290,6 +302,7 @@ export default {
     data() {
         return {
             baseUrl: 'https://localhost:7081',
+            devUrl: 'http://localhost:5173',
             servers: null,
             serverGuid: null,
             editMode: false,

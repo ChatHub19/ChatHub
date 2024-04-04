@@ -7,10 +7,6 @@ import AccountInfo from "../components/AcountInfo.vue"
     <aside>
       <span class="info"> User Settings </span>
       <span class="option"> Account </span>
-      <!-- <span class="option"> Profile </span>
-      <span class="option"> Security </span>
-      <span class="option"> Languange </span>
-      <span class="option"> Advance </span> -->
     </aside>
     <section>
       <div class="custom-option">
