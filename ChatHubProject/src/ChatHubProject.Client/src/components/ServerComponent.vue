@@ -11,39 +11,12 @@ const Modal = {
     },
     setup(props) {
         const serverName = ref(props.editMode ? props.serverToEdit.name : '');
-    props: {
-        editMode: Boolean,
-        serverToEdit: Object,
-    },
-    setup(props) {
-        const serverName = ref(props.editMode ? props.serverToEdit.name : '');
-    props: {
-        editMode: Boolean,
-        serverToEdit: Object,
-    },
-    setup(props) {
-        const serverName = ref(props.editMode ? props.serverToEdit.name : '');
-
         const closeServer = () => {
             isModalOpen.value = false;
-        };
-        const closeServer = () => {
-            isModalOpen.value = false;
-        };
-        const closeServer = () => {
-            isModalOpen.value = false;
-        };
-
-        const saveServer = () => {
-            closeServer();
         };
         const saveServer = () => {
             closeServer();
         };
-        const saveServer = () => {
-            closeServer();
-        };
-
         return { serverName, closeServer, saveServer };
     },
 };
