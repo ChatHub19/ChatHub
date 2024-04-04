@@ -6,6 +6,7 @@ import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
 import signalRService from "../services/SignalRService.js";
+import FriendRequest from '../component/FriendRequest.vue'
 </script>
 
 <template>
