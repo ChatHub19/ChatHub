@@ -1,8 +1,22 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 const Modal = {
+    props: {
+        editMode: Boolean,
+        serverToEdit: Object,
+    },
+    setup(props) {
+        const serverName = ref(props.editMode ? props.serverToEdit.name : '');
+    props: {
+        editMode: Boolean,
+        serverToEdit: Object,
+    },
+    setup(props) {
+        const serverName = ref(props.editMode ? props.serverToEdit.name : '');
     props: {
         editMode: Boolean,
         serverToEdit: Object,
@@ -13,7 +27,19 @@ const Modal = {
         const closeServer = () => {
             isModalOpen.value = false;
         };
+        const closeServer = () => {
+            isModalOpen.value = false;
+        };
+        const closeServer = () => {
+            isModalOpen.value = false;
+        };
 
+        const saveServer = () => {
+            closeServer();
+        };
+        const saveServer = () => {
+            closeServer();
+        };
         const saveServer = () => {
             closeServer();
         };
@@ -42,12 +68,14 @@ const Modal = {
                     @mouseover="showServerTooltip(server.name)"
                     @mouseleave="hideServerTooltip"
                     @contextmenu.prevent="showContextMenu(server)"
+                    @click="this.$router.push(`/${server.userGuid}/server/${server.name}`)"
                 />
                 <div v-show="server.showTooltip && !server.showContextMenu" class="server-tooltip">
                     {{ server.name }}
                 </div>
                 <div v-show="server.showContextMenu" class="server-context-menu">
                     <span @click="editServerProfile(server)">Serverprofil bearbeiten</span>
+                    <span @click="copyServerLink(server)">Link kopieren</span>
                     <span
                         class="removeServer"
                         @click="removeServer(server)"
@@ -164,6 +192,12 @@ export default {
                 this.$refs.serverNameInput.focus();
             });
         },
+        copyServerLink(server) {
+            const serverLink = `${this.devUrl}/${server.userGuid}/server/${server.name}`;
+            navigator.clipboard.writeText(serverLink);
+            this.hideContextMenu();
+            toast.info('Copied server link to clipboard!');
+        },
         async removeServer(server) {
             await axios.delete(`server/delete_server`, {
                 params: {
@@ -251,8 +285,6 @@ export default {
 
         handleInput(event) {
             let inputValue = event.target.value;
-            inputValue = inputValue.replace(/[\\/:*?"<>|]/g, '');
-            event.target.value = inputValue;
             const isDuplicate =
                 this.servers != null &&
                 this.servers.some(
@@ -267,7 +299,6 @@ export default {
             if (inputValue.length > 10) {
                 inputValue = inputValue.replace(/(.{10})/g, '$1\n');
             }
-            console.log(inputValue);
             this.serverName = inputValue;
         },
         handleFileUpload(event) {
@@ -286,6 +317,7 @@ export default {
     data() {
         return {
             baseUrl: 'https://localhost:7081',
+            devUrl: 'http://localhost:5173',
             servers: null,
             serverGuid: null,
             editMode: false,
