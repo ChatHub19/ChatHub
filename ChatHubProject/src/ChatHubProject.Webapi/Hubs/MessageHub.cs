@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ChatHubProject.Webapi.Hubs
 
     public class MessageHub : Hub
     {
-        private static readonly Dictionary<string,string> _users = new();
+        private static readonly Dictionary<string, string[]> _users = new();
 
         public async Task SendJoinedMessageToAll()
         {
@@ -36,12 +37,14 @@ namespace ChatHubProject.Webapi.Hubs
             await Clients.Group("SignalR USers").SendAsync("ReceiveMessage", text, displayname, time);
         }
 
-        public async Task RequestConnectedUsers(string connectionid)
+        public async Task RequestConnectedUsers()
         {
-            if (Context?.User?.Identity?.Name is not null &&
-                !_users.ContainsKey(Context.User.Identity.Name))
+            var username = Context?.User?.Identity?.Name;
+            var connectionid = Context?.ConnectionId;
+            var userGuid = Context?.UserIdentifier;
+            if (username is not null && connectionid is not null && userGuid is not null && !_users.ContainsKey(username))
             {
-                _users.Add(Context.User.Identity.Name, connectionid);
+                _users.Add(username, new string[] { connectionid, userGuid });
             }
             await Clients.All.SendAsync("ReceiveConnectedUsers", _users);
         }

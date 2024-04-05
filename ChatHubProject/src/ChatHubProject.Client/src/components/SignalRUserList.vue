@@ -8,7 +8,7 @@ import signalRService from '../services/SignalRService.js';
       <div class="userlist">
         <span> User </span>
         <div v-for="(value, key) in userlists" :key="key" class="list">
-          <p class="displayname" v-if="key !== displayname" @click="selectUser(value, key)"> 
+          <p class="displayname" v-if="key !== displayname" @click="selectUser(key, value)"> 
           {{ key }}
           </p> 
         </div>
@@ -37,12 +37,14 @@ export default {
     }
   }, 
   methods: {
-    async onUsersReceived(user) {
-      this.userlists = user;
+    async onUsersReceived(value) {
+      // console.log(value.admin[0]); get connectionid
+      // console.log(value.admin[1]); get userguid
+      this.userlists = value;
     },
-    selectUser(connectionid, user) {
-      this.$router.push(`/chatroom/${user}`);
-      alert(connectionid);
+    selectUser(key, value) {
+      this.$router.push(`/chatroom/${key}`);
+      alert(value[0]);
     }
   }
 }
