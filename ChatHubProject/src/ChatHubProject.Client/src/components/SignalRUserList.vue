@@ -42,9 +42,9 @@ export default {
       console.log(user)
       this.userlists = user;
     },
-    selectUser(connectionid, user) {
-      this.$router.push(`/chatroom/${user}`);
-      alert(connectionid);
+    selectUser(key, value) {
+      this.$router.push(`/chatroom/${key}`);
+      alert(value[0]);
     }
   }
 }

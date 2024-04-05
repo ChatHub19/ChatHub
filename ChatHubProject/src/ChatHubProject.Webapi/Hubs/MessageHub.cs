@@ -12,7 +12,7 @@ namespace ChatHubProject.Webapi.Hubs
 
     public class MessageHub : Hub
     {
-        private static readonly List<string> _users = new();
+        private static readonly Dictionary<string, string[]> _users = new();
 
         public async Task SendJoinedMessageToAll()
         {
@@ -37,14 +37,14 @@ namespace ChatHubProject.Webapi.Hubs
             await Clients.Group("SignalR USers").SendAsync("ReceiveMessage", text, displayname, time);
         }
 
-        public async Task RequestConnectedUsers(string connectionid, string userGuid)
+        public async Task RequestConnectedUsers()
         {
-            if (Context?.User?.Identity?.Name is not null &&
-                !_users.Contains(Context.User.Identity.Name))
+            var username = Context?.User?.Identity?.Name;
+            var connectionid = Context?.ConnectionId;
+            var userGuid = Context?.UserIdentifier;
+            if (username is not null && connectionid is not null && userGuid is not null && !_users.ContainsKey(username))
             {
-                _users.Add(Context.User.Identity.Name);
-                _users.Add(connectionid);
-                _users.Add(userGuid);
+                _users.Add(username, new string[] { connectionid, userGuid });
             }
             await Clients.All.SendAsync("ReceiveConnectedUsers", _users);
         }
