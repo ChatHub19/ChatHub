@@ -16,9 +16,10 @@ import videoService from '../services/VideoService.js';
         </div>
       </div>
       <div class="camera-box">
-        <font-awesome-icon icon="fa-solid fa-video" @click="sendVideoCallOffer()" style="color: white; cursor: pointer;"/>
+        <font-awesome-icon id="webcam-btn" icon="fa-solid fa-video" @click="sendVideoCallOffer()" style="color: white; cursor: pointer;"/>
         <h3> Your Camera </h3>
         <video id="webcam" autoplay playsinline muted></video>
+        <font-awesome-icon id="remote-btn" icon="fa-solid fa-video" @click="sendVideoCallOffer()" style="color: white; cursor: pointer;"/>
         <h3> Friend Camera </h3>
         <video id="remote" autoplay playsinline></video>
       </div>
@@ -55,23 +56,123 @@ export default {
       const webcamVideo = document.getElementById("webcam");
       const remoteVideo = document.getElementById("remote");
 
-      const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      const remoteStream = new MediaStream();
-      const pc = new RTCPeerConnection();
+      const webcamButton = document.getElementById("webcam-btn");
+      const remoteButton = document.getElementById("remote-btn");
 
-      videoService.sendVideoCallToAll(localStream);
-      localStream.getTracks().forEach((track) => { pc.addTrack(track, localStream); });
-      pc.ontrack = (event) => {
-        event.streams[0].getTracks().forEach((track) => {
-          remoteStream.addTrack(track);
-        });
-      };
+      let pc;
+      let localStream;
 
+      const signaling = new BroadcastChannel('webrtc'); 
+      signaling.onmessage = e => {
+        if(!localStream) {
+          alert("not ready yet");
+          return;
+        }
+        switch (e.data.type) {
+          case 'offer':
+            handleOffer(e.data);
+            break;
+          case 'answer':
+            handleAnswer(e.data);
+            break;
+          case 'candidate':
+            handleCandidate(e.data);
+            break;
+          case 'ready':
+            if (pc) {
+              alert('already in call, ignoring');
+              return;
+            }
+            makeCall();
+            break;
+          case 'bye':
+            if (pc) {
+              hangup();
+            }
+            break;
+          default:
+            console.log('unhandled', e);
+            break;
+        }
+      }
+      localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
       webcamVideo.srcObject = localStream;
-      remoteVideo.srcObject = remoteStream;
+      signaling.postMessage({type: 'ready'});
+      // videoService.sendVideoCallToAll(localStream);
+      // localStream.getTracks().forEach((track) => { pc.addTrack(track, localStream); });
+      // pc.ontrack = (event) => {
+      //   event.streams[0].getTracks().forEach((track) => {
+      //     remoteStream.addTrack(track);
+      //   });
+      // };
+      async function hangup() {
+        if (pc) {
+          pc.close();
+          pc = null;
+        }
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
 
+      function createPeerConnection() {
+        pc = new RTCPeerConnection();
+        pc.onicecandidate = e => {
+          const message = {
+            type: 'candidate',
+            candidate: null,
+          };
+          if (e.candidate) {
+            message.candidate = e.candidate.candidate;
+            message.sdpMid = e.candidate.sdpMid;
+            message.sdpMLineIndex = e.candidate.sdpMLineIndex;
+          }
+          signaling.postMessage(message);
+        };
+        pc.ontrack = e => remoteVideo.srcObject = e.streams[0];
+        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+      }
 
-    }
+      async function makeCall() {
+        createPeerConnection();
+
+        const offer = await pc.createOffer();
+        signaling.postMessage({type: 'offer', sdp: offer.sdp});
+        await pc.setLocalDescription(offer);
+      }
+
+      async function handleOffer(offer) {
+        if (pc) {
+          console.error('existing peerconnection');
+          return;
+        }
+        createPeerConnection();
+        await pc.setRemoteDescription(offer);
+
+        const answer = await pc.createAnswer();
+        signaling.postMessage({type: 'answer', sdp: answer.sdp});
+        await pc.setLocalDescription(answer);
+      }
+
+      async function handleAnswer(answer) {
+        if (!pc) {
+          console.error('no peerconnection');
+          return;
+        }
+        await pc.setRemoteDescription(answer);
+      }
+
+      async function handleCandidate(candidate) {
+        if (!pc) {
+          console.error('no peerconnection');
+          return;
+        }
+        if (!candidate.candidate) {
+          await pc.addIceCandidate(null);
+        } else {
+          await pc.addIceCandidate(candidate);
+        }
+      }
+    },
   }
 }
 </script>
@@ -85,7 +186,7 @@ export default {
 h3 {
   color: white;
 }
-#webcam {
+#webcam, #remote {
   transform: scaleX(-1);
 }
 .flex {

@@ -144,7 +144,6 @@ export default {
                     },
                 })
             ).data;
-            console.log(this.servers);
             this.servers = (await axios.get('server/all_servers')).data;
         },
         setHoverEffect(value) {
