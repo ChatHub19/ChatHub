@@ -1,5 +1,5 @@
 <script setup>
-import signalRService from '../services/SignalRService.js';
+import chatService from '../services/ChatService.js';
 </script>
 
 <template>
@@ -20,11 +20,11 @@ import signalRService from '../services/SignalRService.js';
 <script>
 export default {
   async mounted() {
-    try { signalRService.subscribeEvent("ReceiveConnectedUsers", this.onUsersReceived); } 
+    try { chatService.subscribeEvent("ReceiveConnectedUsers", this.onUsersReceived); } 
     catch (e) { console.log(e); }    
   },
   async unmounted() {
-    signalRService.unsubscribeEvent("ReceiveConnectedUsers", this.onUsersReceived);
+    chatService.unsubscribeEvent("ReceiveConnectedUsers", this.onUsersReceived);
   }, 
   computed: {
     displayname() { 

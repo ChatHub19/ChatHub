@@ -1,5 +1,6 @@
 <script setup>
-import signalRService from '../services/SignalRService.js';
+import chatService from '../services/ChatService.js';
+import videoService from '../services/VideoService.js';
 </script>
 
 <template>
@@ -14,6 +15,13 @@ import signalRService from '../services/SignalRService.js';
           <p> {{ message.text }} </p> 
         </div>
       </div>
+      <div class="camera-box">
+        <font-awesome-icon icon="fa-solid fa-video" @click="sendVideoCallOffer()" style="color: white; cursor: pointer;"/>
+        <h3> Your Camera </h3>
+        <video id="webcam" autoplay playsinline muted></video>
+        <h3> Friend Camera </h3>
+        <video id="remote" autoplay playsinline></video>
+      </div>
     </div>
   </div>
 </template>
@@ -22,15 +30,15 @@ import signalRService from '../services/SignalRService.js';
 export default {
   async mounted() {
     try { 
-      signalRService.sendJoinedMessageToAll();
-      signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); 
-      signalRService.subscribeEvent("ReceiveJoinedMessage", this.onMessageReceived); 
+      chatService.sendJoinedMessageToAll();
+      chatService.subscribeEvent("ReceiveMessage", this.onMessageReceived); 
+      chatService.subscribeEvent("ReceiveJoinedMessage", this.onMessageReceived); 
     } 
     catch (e) { console.log(e); }    
   },
   async unmounted() {
-    signalRService.unsubscribeEvent("ReceiveMessage", this.onMessageReceived);
-    signalRService.unsubscribeEvent("ReceiveJoinedMessage", this.onMessageReceived);
+    chatService.unsubscribeEvent("ReceiveMessage", this.onMessageReceived);
+    chatService.unsubscribeEvent("ReceiveJoinedMessage", this.onMessageReceived);
   }, 
   data() {
     return {
@@ -42,6 +50,27 @@ export default {
       if(displayname === undefined) { displayname = "System"; }
       if(time === undefined) { time = new Date().toLocaleDateString(); }
       this.messages.push({text, displayname, time}); 
+    },
+    async sendVideoCallOffer() {
+      const webcamVideo = document.getElementById("webcam");
+      const remoteVideo = document.getElementById("remote");
+
+      const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      const remoteStream = new MediaStream();
+      const pc = new RTCPeerConnection();
+
+      videoService.sendVideoCallToAll(localStream);
+      localStream.getTracks().forEach((track) => { pc.addTrack(track, localStream); });
+      pc.ontrack = (event) => {
+        event.streams[0].getTracks().forEach((track) => {
+          remoteStream.addTrack(track);
+        });
+      };
+
+      webcamVideo.srcObject = localStream;
+      remoteVideo.srcObject = remoteStream;
+
+
     }
   }
 }
@@ -52,6 +81,12 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+h3 {
+  color: white;
+}
+#webcam {
+  transform: scaleX(-1);
 }
 .flex {
   display: flex;

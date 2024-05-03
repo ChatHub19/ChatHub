@@ -1,6 +1,6 @@
 <script setup>
 import axios from "axios";
-import signalRService from '../services/SignalRService.js';
+import chatService from '../services/ChatService.js';
 import ProfileAvatar from "vue-profile-avatar";
 </script>
 
@@ -67,7 +67,7 @@ export default {
       this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
     async getOnlineStatus() {
-      if(signalRService.connected)
+      if(chatService.connected)
         this.accountModel.status = "Online"
       else
         this.accountModel.status = "Offline"

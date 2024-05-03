@@ -4,7 +4,7 @@ import SignalRUserList from "../components/SignalRUserList.vue"
 import UserProfile from "../components/UserProfile.vue"
 import MessageBox from "../components/MessageBox.vue"
 import MessageInput from "../components/MessageInput.vue"
-import signalRService from '../services/SignalRService.js';
+import chatService from '../services/ChatService.js';
 </script>
 
 <template>
@@ -28,9 +28,9 @@ import signalRService from '../services/SignalRService.js';
 <script>
 export default {
   async mounted() {
-    signalRService.configureConnection(); 
-    await signalRService.connect();
-    this.connected = signalRService.connected;
+    chatService.configureConnection(); 
+    await chatService.connect();
+    this.connected = chatService.connected;
   },
   data() {
     return {

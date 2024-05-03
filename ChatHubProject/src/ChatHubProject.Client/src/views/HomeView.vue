@@ -5,7 +5,8 @@ import SignalRUserList from "../components/SignalRUserList.vue";
 import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
-import signalRService from "../services/SignalRService.js";
+import chatService from "../services/ChatService.js";
+import videoService from "../services/VideoService.js";
 </script>
 
 <template>
@@ -28,9 +29,11 @@ import signalRService from "../services/SignalRService.js";
 <script>
 export default {
   async mounted() {
-    signalRService.configureConnection();
-    await signalRService.connect();
-    this.connected = signalRService.connected;
+    chatService.configureConnection();
+    await chatService.connect();
+    videoService.configureConnection();
+    await videoService.connect();
+    this.connected = chatService.connected, videoService.connected;
   },
   data() {
     return {
@@ -57,5 +60,6 @@ export default {
 #messagebox {
   flex-grow: 1;
   overflow: hidden;
+  margin-right: 10px;
 }
 </style>
