@@ -1,5 +1,6 @@
 <script setup>
 import signalRService from '../services/SignalRService.js';
+import FriendRequest from "../components/FriendRequest.vue";
 </script>
 
 <template>
@@ -78,9 +79,11 @@ p {
 }
 .displayname {
   font-weight: normal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.list:hover {
-  cursor: pointer;
-  background: grey;
+#friendrequest {
+  margin-left: auto;
 }
 </style>

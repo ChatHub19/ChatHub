@@ -28,7 +28,6 @@ import ProfileAvatar from "vue-profile-avatar";
 <script>
 export default {
   async mounted() {
-    await this.getUserdata();
     await this.getDisplayname();
     await this.getOnlineStatus();   
   },
@@ -56,13 +55,6 @@ export default {
     }
   }, 
   methods: {
-    async getUserdata() {
-      try {
-        var userdata = (await axios.get("user/userinfo")).data
-        this.$store.commit("authenticate", userdata)
-      } 
-      catch (e) { e.response.data }
-    },
     async getDisplayname() {
       this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
