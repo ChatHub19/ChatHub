@@ -92,11 +92,14 @@ namespace ChatHubProject.Webapi.Controllers
 
                 var role = user.Role;
                 var group = user.Group;
+                var guid = user.Guid;
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Username),
+
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
                     new Claim("Group", group ?? "No Group"),
+                    new Claim("Guid", guid ?? new Guid),
                 };
                 var claimsidentity = new ClaimsIdentity
                 (

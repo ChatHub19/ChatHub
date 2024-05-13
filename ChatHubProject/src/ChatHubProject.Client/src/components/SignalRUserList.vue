@@ -1,5 +1,6 @@
 <script setup>
 import signalRService from '../services/SignalRService.js';
+import FriendRequest from "../components/FriendRequest.vue";
 </script>
 
 <template>
@@ -9,7 +10,7 @@ import signalRService from '../services/SignalRService.js';
         <span> User </span>
         <div v-for="(value, key) in userlists" :key="key" class="list">
           <p class="displayname" v-if="key !== displayname" @click="selectUser(value, key)"> 
-          {{ key }}
+              {{ key }} <FriendRequest id="friendrequest" />
           </p> 
         </div>
       </div>
@@ -38,6 +39,7 @@ export default {
   }, 
   methods: {
     async onUsersReceived(user) {
+      console.log(user)
       this.userlists = user;
     },
     selectUser(connectionid, user) {
@@ -76,9 +78,11 @@ p {
 }
 .displayname {
   font-weight: normal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.list:hover {
-  cursor: pointer;
-  background: grey;
+#friendrequest {
+  margin-left: auto;
 }
 </style>
