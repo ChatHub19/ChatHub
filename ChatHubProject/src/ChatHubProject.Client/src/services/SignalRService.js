@@ -53,6 +53,11 @@ class SignalRService {
     if (!this.connected) { throw new Error("Invalid state. Not connected."); }
     await this.connection.invoke("SendMessageToAll", text, displayname, time);
   }
+
+  async sendVideoCallToAll(videoData) {
+    if (!this.connected) { throw new Error("Invalid state. Not connected."); }
+    await this.connection.invoke("SendVideoCallToAll", videoData);
+  }
 }
 
 const signalRSerivce = new SignalRService();
