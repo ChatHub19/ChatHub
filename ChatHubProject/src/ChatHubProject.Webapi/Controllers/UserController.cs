@@ -86,7 +86,7 @@ namespace ChatHubProject.Webapi.Controllers
         public async Task<IActionResult> LoginSPG([FromBody] LoginDto credentials)
         {
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.Username);
-            if (user is not null) 
+            if (user is not null)
             {
                 if (!user.CheckPassword(credentials.Password)) { return Unauthorized("Login failed! Invalid credentials!"); }
 
@@ -96,11 +96,9 @@ namespace ChatHubProject.Webapi.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Username),
-
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
                     new Claim(ClaimTypes.NameIdentifier, guid),
                     new Claim("Group", group ?? "No Group"),
-                    new Claim("Guid", guid ?? new Guid),
                 };
                 var claimsidentity = new ClaimsIdentity
                 (
@@ -195,7 +193,7 @@ namespace ChatHubProject.Webapi.Controllers
         {
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == credentials.Email);
             if (user is null)
-            {   
+            {
                 user = new User(credentials.Username, credentials.Username, credentials.Password, credentials.Email, Userrole.Pupil.ToString());
                 await _db.Users.AddAsync(user);
                 try { await _db.SaveChangesAsync(); }
@@ -279,7 +277,7 @@ namespace ChatHubProject.Webapi.Controllers
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Guid == guid);
             if (user is null) { return NotFound("User does not exist"); }
             if (!user.CheckPassword(editpasswordcmd.Password)) { return Unauthorized("Invalid Password"); }
-            if(editpasswordcmd.NewPassword != editpasswordcmd.ConfirmNewPassword) { return BadRequest("Confirm Password is wrong"); }
+            if (editpasswordcmd.NewPassword != editpasswordcmd.ConfirmNewPassword) { return BadRequest("Confirm Password is wrong"); }
             user.SetPassword(editpasswordcmd.NewPassword);
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
