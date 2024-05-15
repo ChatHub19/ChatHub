@@ -1,7 +1,7 @@
 <script setup>
 import axios from "axios";
 import chatService from "../services/ChatService.js";
-import VideoCallButtonVue from './VideoCallButton.vue';
+
 </script>
 
 <template>
@@ -14,9 +14,6 @@ import VideoCallButtonVue from './VideoCallButton.vue';
           placeholder="Enter Message"
           @keypress.enter="SendMessage()"
         />
-        <div class="video">
-          <VideoCallButtonVue />
-        </div>
       </div>
     </div>
   </div>
@@ -84,13 +81,5 @@ input:focus::placeholder {
 .message-container {
   width: 100%;
   position: relative;
-}
-.video {
-  color: white;
-  cursor: pointer;
-  position: absolute;
-  right: 10px; 
-  top: 50%;
-  transform: translateY(-50%);
 }
 </style>

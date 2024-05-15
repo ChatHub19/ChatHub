@@ -5,8 +5,11 @@ import SignalRUserList from "../components/SignalRUserList.vue";
 import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
+import VideoCallButton from '../components/VideoCallButton.vue';
 import chatService from "../services/ChatService.js";
 import videoService from "../services/VideoService.js";
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
@@ -20,6 +23,9 @@ import videoService from "../services/VideoService.js";
       <UserProfile id="userprofil" />
       <MessageInput id="messageinput" />
     </div>
+    <div class="flex">
+      <VideoCallButton/>
+    </div>
   </div>
   <div v-else>
     <LoaderComponent />
@@ -29,6 +35,7 @@ import videoService from "../services/VideoService.js";
 <script>
 export default {
   async mounted() {
+    toast.success("Success")
     chatService.configureConnection();
     await chatService.connect();
     videoService.configureConnection();
@@ -55,6 +62,14 @@ export default {
 .flex {
   display: flex;
   align-items: center;
+}
+.video {
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  right: 10px; 
+  top: 50%;
+  transform: translateY(-50%);
 }
 #messageinput,
 #messagebox {
