@@ -1,5 +1,7 @@
 <script setup>
+import axios from "axios"
 import LoaderComponent from "../components/LoaderComponent.vue";
+import FriendRequest from "../components/FriendRequest.vue";
 import ServerComponent from "../components/ServerComponent.vue";
 import SignalRUserList from "../components/SignalRUserList.vue";
 import UserProfile from "../components/UserProfile.vue";
@@ -11,7 +13,7 @@ import signalRService from "../services/SignalRService.js";
 <template>
   <div class="wrapper" v-if="connected">
     <div class="flex">
-      <ServerComponent id="server" />
+      <!-- <ServerComponent id="server" /> -->
       <SignalRUserList id="userlist" />
       <MessageBox id="messagebox" />
     </div>
@@ -28,6 +30,7 @@ import signalRService from "../services/SignalRService.js";
 <script>
 export default {
   async mounted() {
+    await this.getUserdata();
     signalRService.configureConnection();
     await signalRService.connect();
     this.connected = signalRService.connected;
@@ -37,6 +40,15 @@ export default {
       connected: false,
     };
   },
+  methods: {
+    async getUserdata() {
+      try {
+        var userdata = (await axios.get("user/userinfo")).data
+        this.$store.commit("authenticate", userdata)
+      } 
+      catch (e) { e.response.data }
+    },
+  }
 };
 </script>
 

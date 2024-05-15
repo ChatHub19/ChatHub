@@ -4,7 +4,6 @@ import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
-
 const Modal = {
     props: {
         editMode: Boolean,
@@ -12,12 +11,15 @@ const Modal = {
     },
     setup(props) {
         const serverName = ref(props.editMode ? props.serverToEdit.name : '');
+
         const closeServer = () => {
             isModalOpen.value = false;
         };
+
         const saveServer = () => {
             closeServer();
         };
+
         return { serverName, closeServer, saveServer };
     },
 };
@@ -100,6 +102,45 @@ const Modal = {
                         uploadedFileName
                     }}</span>
                 </div>
+        <div v-if="isModalOpen" class="modal" @click="closeServer">
+            <div class="modal-content" @click.stop>
+                <h2 id="heading">
+                    {{ editMode ? 'Server bearbeiten' : 'Server erstellen' }}
+                </h2>
+                <h3 id="description">
+                    Gib deinem Server mit einem Namen und einem Icon eine ganz eigene
+                    Persönlichkeit. Du kannst sie später jederzeit ändern.
+                </h3>
+                <h4 id="name">SERVERNAME</h4>
+                <input
+                    ref="serverNameInput"
+                    type="text"
+                    class="input"
+                    v-model="serverName"
+                    @input="handleInput"
+                    :minlength="1"
+                    :maxlength="20"
+                    :placeholder="'max. 20 Buchstaben'"
+                />
+                <input
+                    ref="fileInput"
+                    type="file"
+                    accept=".png, .jpg, .jpeg"
+                    style="display: none"
+                    @change="handleFileUpload"
+                />
+                <div class="uploadContainer">
+                    <button
+                        @click="uploadServerProfile"
+                        id="uploadButton"
+                        :disabled="isUploadDisabled"
+                    >
+                        Upload Image
+                    </button>
+                    <span v-if="uploadedFileName" id="successUploadProfile">{{
+                        uploadedFileName
+                    }}</span>
+                </div>
 
                 <div class="bottomHalf">
                     <span v-if="duplicateError" id="error-message">Name bereits vorhanden</span>
@@ -115,6 +156,19 @@ const Modal = {
             </div>
         </div>
     </div>
+                <div class="bottomHalf">
+                    <span v-if="duplicateError" id="error-message">Name bereits vorhanden</span>
+                    <button
+                        ref="saveButton"
+                        @click="editMode ? saveEditServer() : saveAddServer()"
+                        :disabled="isSaveDisabled"
+                        id="saveButton"
+                    >
+                        {{ editMode ? 'Update' : 'Save' }}
+                    </button>
+                </div>
+            </div>
+        </div>
 </template>
 
 <script>
@@ -147,6 +201,10 @@ export default {
             this.isUploadDisabled = true;
             this.isSaveDisabled = true;
             this.hideContextMenu();
+
+            this.$nextTick(() => {
+                this.$refs.serverNameInput.focus();
+            });
         },
         editServerProfile(server) {
             this.serverGuid = server.guid;
@@ -155,6 +213,7 @@ export default {
             this.serverToEdit = server;
             this.serverName = server.name;
 
+            this.hideContextMenu();
             this.hideContextMenu();
 
             this.$nextTick(() => {
@@ -181,7 +240,6 @@ export default {
             this.duplicateError = false;
             this.isModalOpen = false;
         },
-
         async saveAddServer() {
             if (this.serverName && this.serverName.trim() !== '') {
                 const newServer = {
@@ -239,7 +297,6 @@ export default {
                 server.showTooltip = false;
             });
         },
-
         showContextMenu(server) {
             this.hideContextMenu();
             server.showTooltip = false;
@@ -251,7 +308,6 @@ export default {
                 server.showContextMenu = false;
             });
         },
-
         handleInput(event) {
             let inputValue = event.target.value;
             const isDuplicate =
@@ -306,8 +362,14 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,200;6..12,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,200;6..12,400&display=swap');
 
 .sidebar {
+    height: 89.1vh;
+    width: 65px;
+    text-align: center;
+    padding-top: 1rem;
+    background: #201c24;
     height: 89.1vh;
     width: 65px;
     text-align: center;
@@ -317,6 +379,15 @@ export default {
 
 .main-icon,
 .servers-icon {
+    position: relative;
+    width: 1.55rem;
+    height: 1.75rem;
+    font-size: 1.75rem;
+    border-radius: 50%;
+    padding: 0.75rem;
+    background: #38343c;
+    color: #7b84f2;
+    transition: border-radius 0.35s;
     position: relative;
     width: 1.55rem;
     height: 1.75rem;
@@ -338,9 +409,22 @@ export default {
     top: 1.325rem;
     transform: translateX(55.5%);
     white-space: normal;
+    position: absolute;
+    background: #181414;
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 16px;
+    top: 1.325rem;
+    transform: translateX(55.5%);
+    white-space: normal;
 }
 
 .servers-icon {
+    width: 48.8px;
+    height: 52px;
+    padding: 0 !important;
+    background: none;
     width: 48.8px;
     height: 52px;
     padding: 0 !important;
@@ -352,14 +436,22 @@ export default {
     cursor: pointer;
     background: #7464f1;
     color: #fff;
+    border-radius: 32.5%;
+    cursor: pointer;
+    background: #7464f1;
+    color: #fff;
 }
 
 .servers-icon:hover {
     border-radius: 32.5%;
     cursor: pointer;
+    border-radius: 32.5%;
+    cursor: pointer;
 }
 
 #server-item {
+    margin-top: 10px;
+    position: relative;
     margin-top: 10px;
     position: relative;
 }
@@ -374,9 +466,28 @@ export default {
     width: 10px;
     background-color: #fff;
     border-radius: 32.5%;
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: -5px;
+    height: 40%;
+    width: 10px;
+    background-color: #fff;
+    border-radius: 32.5%;
 }
 
 .server-tooltip {
+    position: absolute;
+    background: #181414;
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 16px;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%) translateX(100%);
+    white-space: normal;
     position: absolute;
     background: #181414;
     color: #fff;
@@ -403,9 +514,24 @@ export default {
     white-space: nowrap;
     cursor: pointer;
     z-index: 1000;
+    text-align: left;
+    position: absolute;
+    background: #181414;
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 16px;
+    right: 25px;
+    top: 150%;
+    transform: translateY(-50%) translateX(100%);
+    white-space: nowrap;
+    cursor: pointer;
+    z-index: 1000;
 }
 
 .server-context-menu span {
+    display: block;
+    padding: 0.5rem;
     display: block;
     padding: 0.5rem;
 }
@@ -414,12 +540,19 @@ export default {
     background: #737de5;
     color: #fff;
     border-radius: 5px;
+    background: #737de5;
+    color: #fff;
+    border-radius: 5px;
 }
 
 .removeServer {
     color: #ff0000;
+    color: #ff0000;
 }
 .removeServer:hover {
+    background: #ff0000 !important;
+    color: #fff;
+    border-radius: 5px;
     background: #ff0000 !important;
     color: #fff;
     border-radius: 5px;

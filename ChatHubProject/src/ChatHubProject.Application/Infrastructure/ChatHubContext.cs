@@ -111,6 +111,7 @@ namespace ChatHubProject.Application.Infrastructure
             .ToList();
             await FriendRequests.AddRangeAsync(requests);
             await SaveChangesAsync();
+
         }
 
         public async Task CreateDatabase(bool isDevelopment)
