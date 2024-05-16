@@ -1,6 +1,8 @@
 <script setup>
 import LoaderComponent from "../components/LoaderComponent.vue"
 import SignalRUserList from "../components/SignalRUserList.vue"
+import ServerComponent from "../components/ServerComponent.vue";
+import VideoCallButton from '../components/VideoCallButton.vue';
 import UserProfile from "../components/UserProfile.vue"
 import MessageBox from "../components/MessageBox.vue"
 import MessageInput from "../components/MessageInput.vue"
@@ -10,6 +12,7 @@ import chatService from '../services/ChatService.js';
 <template>
   <div class="wrapper" v-if="connected">
     <div class="flex">
+      <ServerComponent id="server" />
       <SignalRUserList id="userlist"/>
       <!-- Todo: Replace MessageBox with PrivateMessageBox component -->
       <MessageBox id="messagebox"/>
@@ -18,6 +21,9 @@ import chatService from '../services/ChatService.js';
       <UserProfile id="userprofil"/>
       <!-- Todo: Replace MessageInput with PrivateMessageInput component -->
       <MessageInput id="messageinput"/>
+    </div>
+    <div class="flex">
+      <VideoCallButton/>
     </div>
   </div>
   <div v-else>
@@ -42,19 +48,28 @@ export default {
 
 <style scoped>
 * {
-	margin: 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  overflow: hidden;
 }
 .wrapper {
-  background: rgb(148, 147, 147);
+  background: #38343c;
 }
 .flex {
   display: flex;
   align-items: center;
 }
+.video {
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  right: 10px; 
+  top: 50%;
+  transform: translateY(-50%);
+}
 #messageinput, #messagebox {
   flex-grow: 1;
+  overflow: hidden;
+  margin-right: 10px;
 }
 </style>

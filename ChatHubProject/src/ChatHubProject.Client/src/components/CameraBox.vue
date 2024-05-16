@@ -1,12 +1,12 @@
 <template>
   <div class="camera-box">
     <div class="video-container">
-      <div>
+      <div class="flex">
         <h3> Your Camera </h3>
         <video id="webcam" autoplay playsinline muted></video>
       </div>
-      <div>
-        <h3> Other Camera </h3>
+      <div class="flex" id="a">
+        <h3> Friend Camera </h3>
         <video id="remote" autoplay playsinline></video>
       </div>
     </div>
@@ -143,26 +143,38 @@ export default {
 
 <style scoped>
 h3 {
-  padding: 20px;
+  padding:  20px 0;
   color: white;
 }
 video {
-  margin-left: 20px;
-  width: 95%;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
 }
 .camera-box {
   position: absolute;
   top: 0;
   background: #38343c;
   height: 90vh;
-  width: 74vw;
+  max-width: 74vw;
   margin-left: 25vw;
 }
 .video-container {
   display: flex;
-  justify-content: space-between;
 }
-.video-container > div {
-  flex: 1;
+.flex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+@media only screen and (max-width: 769px) {
+  .video-container {
+    flex-direction: column;
+  }
+  video {
+    width: 50%;
+    height: 50%;
+  }
 }
 </style>

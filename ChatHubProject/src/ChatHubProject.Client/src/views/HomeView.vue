@@ -5,7 +5,6 @@ import SignalRUserList from "../components/SignalRUserList.vue";
 import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
-import VideoCallButton from '../components/VideoCallButton.vue';
 import chatService from "../services/ChatService.js";
 import videoService from "../services/VideoService.js";
 import { toast } from 'vue3-toastify';
@@ -22,9 +21,6 @@ import 'vue3-toastify/dist/index.css';
     <div class="flex">
       <UserProfile id="userprofil" />
       <MessageInput id="messageinput" />
-    </div>
-    <div class="flex">
-      <VideoCallButton/>
     </div>
   </div>
   <div v-else>
@@ -71,8 +67,7 @@ export default {
   top: 50%;
   transform: translateY(-50%);
 }
-#messageinput,
-#messagebox {
+#messageinput, #messagebox {
   flex-grow: 1;
   overflow: hidden;
   margin-right: 10px;

@@ -5,14 +5,50 @@ import chatService from '../services/ChatService.js';
 <template>
   <div class="wrapper">
     <div class="container">
-      <div class="userlist">
-        <span> User </span>
-        <div v-for="(value, key) in userlists" :key="key" class="list">
-          <p class="displayname" v-if="key !== displayname" @click="selectUser(key, value)"> 
-          {{ key }}
-          </p> 
+      <nav>
+        <input type="checkbox" id="active">
+        <label for="active" class="menu-btn"> 
+          <font-awesome-icon icon="fa-solid fa-bars" id="icon"/> 
+        </label>
+        <div class="listwrapper">
+          <label class="listname"> User </label>
+          <ul v-for="(value, key) in userlists" :key="key">
+            <li class="displayname" v-if="key !== displayname" @click="selectUser(key, value)"> 
+              {{ key }}
+            </li> 
+          </ul>
+          <ul v-for="(value, key) in userlists" :key="key">
+            <li class="displayname" v-if="key !== displayname" @click="selectUser(key, value)"> 
+              {{ key }}
+            </li> 
+          </ul>
+          <ul v-for="(value, key) in userlists" :key="key">
+            <li class="displayname" v-if="key !== displayname" @click="selectUser(key, value)"> 
+              {{ key }}
+            </li> 
+          </ul>
+          <ul v-for="(value, key) in userlists" :key="key">
+            <li class="displayname" v-if="key !== displayname" @click="selectUser(key, value)"> 
+              {{ key }}
+            </li> 
+          </ul>
+          <ul v-for="(value, key) in userlists" :key="key">
+            <li class="displayname" v-if="key !== displayname" @click="selectUser(key, value)"> 
+              {{ key }}
+            </li> 
+          </ul>
+          <ul v-for="(value, key) in userlists" :key="key">
+            <li class="displayname" v-if="key !== displayname" @click="selectUser(key, value)"> 
+              {{ key }}
+            </li> 
+          </ul>
+          <ul v-for="(value, key) in userlists" :key="key">
+            <li class="displayname" v-if="key !== displayname" @click="selectUser(key, value)"> 
+              {{ key }}
+            </li> 
+          </ul>
         </div>
-      </div>
+      </nav>
     </div>
   </div>
 </template>
@@ -44,7 +80,7 @@ export default {
     },
     selectUser(key, value) {
       this.$router.push(`/chatroom/${key}`);
-      alert(value[0]);
+      // alert(value[0]);
     }
   }
 }
@@ -63,24 +99,89 @@ export default {
   background: #302c34;
   color: white;
 }
-.userlist {
+/* .userlist {
   padding: 10px;
   overflow-y: auto;
-}
-span {
+} */
+label {
   padding: 5px;
   border-radius: 5px;
   font-weight: bold;
   color: white;
 }
-p {
+li {
   padding: 5px;
 }
 .displayname {
   font-weight: normal;
 }
-.list:hover {
+/* responsive */
+.listwrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #302c34;
+  clip-path: circle(25px at calc(45px) 45px);
+  transition: all 0.3s ease-in-out;
+  z-index: 1;
+  overflow: auto;
+}
+#active:checked ~ .listwrapper{
+  clip-path: circle(75%);
+}
+.menu-btn{
+  position: absolute;
+  z-index: 2;
+  left: 20px;
+  top: 20px;
+  height: 50px;
+  width: 50px;
+  text-align: center;
+  line-height: 40px;
+  border-radius: 50%;
+  font-size: 20px;
+  color: white;
   cursor: pointer;
-  background: grey;
+  background: #302c34;
+  transition: all 0.3s ease-in-out;
+}
+#active:checked ~ .menu-btn{
+  background: white;
+  color: black;
+}
+#active:checked ~ .menu-btn #icon:before{
+  content: "\f00d";
+}
+.listwrapper ul{
+  display: flex;
+}
+.listwrapper ul li {
+  color: none;
+  text-decoration: none;
+  font-size: 26px;
+  font-weight: 500;
+  margin: 15px 0;
+  padding: 5px 30px;
+  color: white;
+  position: relative;
+  line-height: 50px;
+  transition: all 0.3s ease;
+}
+.listwrapper ul li:hover {
+  color: blueviolet;
+  cursor: pointer;
+}
+.listname {
+  text-decoration: underline;
+  margin: 100px 0 20px 0;
+  padding: 5px 30px;
+  font-size: 30px;
+  font-weight: bolder;
+  color: lightgrey;
+}
+#active {
+  display: none;
 }
 </style>
