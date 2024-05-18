@@ -1,7 +1,7 @@
 <script setup>
 import LoaderComponent from "../components/LoaderComponent.vue";
 import ServerComponent from "../components/ServerComponent.vue";
-import SignalRUserList from "../components/SignalRUserList.vue";
+import SignalRList from "../components/SignalRList.vue";
 import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
@@ -12,7 +12,7 @@ import chatService from "../services/ChatService.js";
   <div class="wrapper" v-if="connected">
     <div class="flex">
       <ServerComponent id="server" />
-      <SignalRUserList id="userlist" />
+      <SignalRList id="userlist" />
       <MessageBox id="messagebox" />
     </div>
     <div class="flex">

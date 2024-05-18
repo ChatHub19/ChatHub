@@ -1,6 +1,6 @@
 <script setup>
 import LoaderComponent from "../components/LoaderComponent.vue"
-import SignalRUserList from "../components/SignalRUserList.vue"
+import SignalRList from "../components/SignalRList.vue"
 import ServerComponent from "../components/ServerComponent.vue";
 import VideoCallButton from '../components/VideoCallButton.vue';
 import UserProfile from "../components/UserProfile.vue"
@@ -13,7 +13,7 @@ import chatService from '../services/ChatService.js';
   <div class="wrapper" v-if="connected">
     <div class="flex">
       <ServerComponent id="server" />
-      <SignalRUserList id="userlist"/>
+      <SignalRList id="userlist"/>
       <!-- Todo: Replace MessageBox with PrivateMessageBox component -->
       <MessageBox id="messagebox"/>
     </div>

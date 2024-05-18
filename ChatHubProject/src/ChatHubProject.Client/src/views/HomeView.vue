@@ -1,7 +1,8 @@
 <script setup>
 import LoaderComponent from "../components/LoaderComponent.vue";
 import ServerComponent from "../components/ServerComponent.vue";
-import SignalRUserList from "../components/SignalRUserList.vue";
+import SignalRList from "../components/SignalRList.vue";
+import NavMenu from "../components/NavMenu.vue";
 import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
@@ -15,7 +16,8 @@ import 'vue3-toastify/dist/index.css';
   <div class="wrapper" v-if="connected">
     <div class="flex">
       <ServerComponent id="server" />
-      <SignalRUserList id="userlist" />
+      <SignalRList id="userlist"/>
+      <NavMenu id="navmenu" />
       <MessageBox id="messagebox" />
     </div>
     <div class="flex">
@@ -67,9 +69,20 @@ export default {
   top: 50%;
   transform: translateY(-50%);
 }
+#navmenu {
+  display: none;
+}
 #messageinput, #messagebox {
   flex-grow: 1;
   overflow: hidden;
   margin-right: 10px;
+}
+@media screen and (max-width: 769px) {
+  #navmenu {
+    display: flex;
+  }
+  #userlist {
+    display: none;
+  }
 }
 </style>

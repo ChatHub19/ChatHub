@@ -546,4 +546,16 @@ export default {
     font-size: 17px;
     font-family: 'Nunito Sans';
 }
+
+@media screen and (max-width: 769px) {
+    .wrapper {
+        background: #302c34;
+    }
+    .sidebar {
+        background: #302c34;
+    }
+    .sidebar:first-child {
+        margin-top: 80px;
+    }
+}
 </style>    
