@@ -36,4 +36,9 @@ export default {
   color: white;
   cursor: pointer;
 }
+@media screen and (max-width: 769px) {
+  .video {
+    bottom: 38px;
+  }
+}
 </style>

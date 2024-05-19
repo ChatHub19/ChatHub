@@ -72,6 +72,9 @@ export default {
   color: white;
   overflow: auto;
 }
+li {
+  cursor: pointer;
+}
 label {
   border-radius: 5px;
   font-weight: bold;
@@ -110,7 +113,7 @@ ul, .menu-btn {
     display: initial;
     position: absolute;
     z-index: 2;
-    left: 8px;
+    left: 7px;
     top: 17px;
     height: 50px;
     width: 50px;
@@ -160,5 +163,9 @@ ul, .menu-btn {
   #active:checked ~ .menu-btn #icon:before{
     content: "\f00d";
   } 
+  .container {
+    width: 0;
+    padding: 0;
+  }
 }
 </style>

@@ -2,7 +2,6 @@
 import LoaderComponent from "../components/LoaderComponent.vue";
 import ServerComponent from "../components/ServerComponent.vue";
 import SignalRList from "../components/SignalRList.vue";
-import NavMenu from "../components/NavMenu.vue";
 import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
@@ -17,7 +16,6 @@ import 'vue3-toastify/dist/index.css';
     <div class="flex">
       <ServerComponent id="server" />
       <SignalRList id="userlist"/>
-      <NavMenu id="navmenu" />
       <MessageBox id="messagebox" />
     </div>
     <div class="flex">
@@ -82,7 +80,8 @@ export default {
     display: flex;
   }
   #userlist {
-    display: none;
+    width: 0;
+    height: 0;
   }
 }
 </style>

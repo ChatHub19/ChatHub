@@ -23,7 +23,7 @@ import chatService from '../services/ChatService.js';
       <MessageInput id="messageinput"/>
     </div>
     <div class="flex">
-      <VideoCallButton/>
+      <VideoCallButton id="videocallbtn"/>
     </div>
   </div>
   <div v-else>
@@ -71,5 +71,14 @@ export default {
   flex-grow: 1;
   overflow: hidden;
   margin-right: 10px;
+}
+@media screen and (max-width: 769px) {
+  #navmenu {
+    display: flex;
+  }
+  #userlist {
+    height: 0;
+    width: 0;
+  }
 }
 </style>

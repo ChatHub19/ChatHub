@@ -455,7 +455,7 @@ export default {
 
 .modal-content {
     position: absolute;
-    width: 35rem;
+    width: 80vw;
     font-family: 'Nunito Sans';
     color: #000;
     background: #fff;
@@ -546,15 +546,31 @@ export default {
     font-size: 17px;
     font-family: 'Nunito Sans';
 }
-
+.wrapper {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+/* For Chrome, Safari and Opera */
+.wrapper::-webkit-scrollbar {
+  display: none;
+}
+/* For Firefox */
+.wrapper {
+  scrollbar-width: none;
+}
+/* For IE and Edge */
+.wrapper {
+  -ms-overflow-style: none;
+}
 @media screen and (max-width: 769px) {
     .wrapper {
         background: #302c34;
     }
     .sidebar {
         background: #302c34;
+        height: 85.3vh;
     }
-    .sidebar:first-child {
+    .main-icon {
         margin-top: 80px;
     }
 }

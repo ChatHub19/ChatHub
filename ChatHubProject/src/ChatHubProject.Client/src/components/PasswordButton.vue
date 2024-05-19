@@ -77,7 +77,7 @@ input, button {
   color: white;
 }
 button {
-  width: 50%;
+  width: 100%;
   background: linear-gradient(
 		to bottom right,
 		var(--lightblue), 

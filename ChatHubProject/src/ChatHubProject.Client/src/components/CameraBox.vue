@@ -172,6 +172,10 @@ video {
   .video-container {
     flex-direction: column;
   }
+  .camera-box {
+    height: 85.3vh;
+    margin-left: 10vw;
+  }
   video {
     width: 50%;
     height: 50%;

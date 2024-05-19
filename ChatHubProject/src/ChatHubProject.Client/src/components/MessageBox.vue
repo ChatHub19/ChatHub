@@ -91,4 +91,9 @@ h3 {
   font-size: 12px;
   color: white;
 }
+@media screen and (max-width: 769px) { 
+  .message-box {
+    height: 85.3vh;
+  }
+}
 </style>
