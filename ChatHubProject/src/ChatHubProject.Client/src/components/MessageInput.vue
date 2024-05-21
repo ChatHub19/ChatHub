@@ -1,6 +1,7 @@
 <script setup>
 import axios from "axios";
-import signalRService from "../services/SignalRService.js";
+import chatService from "../services/ChatService.js";
+
 </script>
 
 <template>
@@ -39,7 +40,7 @@ export default {
         const time = new Date().toLocaleTimeString();
         const userguid = this.guid;
         await axios.post("message/send", { text, userguid, time });
-        signalRService.sendMessageToAll(text, displayname, time);
+        chatService.sendMessageToAll(text, displayname, time);
       }
       this.message = "";
     },
@@ -79,5 +80,6 @@ input:focus::placeholder {
 }
 .message-container {
   width: 100%;
+  position: relative;
 }
 </style>

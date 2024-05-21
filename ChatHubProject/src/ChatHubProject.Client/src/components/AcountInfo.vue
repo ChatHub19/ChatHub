@@ -120,7 +120,7 @@ export default {
   flex-direction: column;
 }
 input, button {
-  width: 50%;
+  width: 100%;
   padding: .5rem;
   border: 1px solid transparent;
   border-radius: 5px;

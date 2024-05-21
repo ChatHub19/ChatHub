@@ -11,7 +11,7 @@ class SignalRService {
   }
 
   configureConnection() {
-    const host = process.env.NODE_ENV == 'production' ? "/messageHub" : "https://localhost:7081/messageHub";
+    const host = process.env.NODE_ENV == 'production' ? "/videoHub" : "https://localhost:7081/videoHub";
     this.connection = new SignalR.HubConnectionBuilder()
       .withUrl(`${host}`)
       .withAutomaticReconnect()
@@ -43,15 +43,10 @@ class SignalRService {
       this.connection.off(type, callback);
   } 
 
-  async sendJoinedMessageToAll() {
+  async sendVideoCallToAll(videoData) {
     if (!this.connected) { throw new Error("Invalid state. Not connected."); }
-    await this.connection.invoke("SendJoinedMessageToAll");
-    await this.connection.invoke("RequestConnectedUsers");
-  }
-
-  async sendMessageToAll(text, displayname, time) {
-    if (!this.connected) { throw new Error("Invalid state. Not connected."); }
-    await this.connection.invoke("SendMessageToAll", text, displayname, time);
+    console.log(videoData.id);
+    await this.connection.invoke("SendVideoCallToAll", videoData.id);
   }
 }
 

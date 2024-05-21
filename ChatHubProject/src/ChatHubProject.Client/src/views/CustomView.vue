@@ -4,10 +4,6 @@ import AccountInfo from "../components/AcountInfo.vue"
 
 <template>
   <div class="wrapper">
-    <aside>
-      <span class="info"> User Settings </span>
-      <span class="option"> Account </span>
-    </aside>
     <section>
       <div class="custom-option">
         <AccountInfo/>
@@ -33,18 +29,12 @@ export default {
   max-width: 100vw;
   display: flex;
 }
-aside {
-  width: 30%;
-  padding-right: 10px;
-  align-items: flex-end; 
-  background: #2f3136;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: right;
-}
 section {
-  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
   align-items: flex-start;
   background: #36393f;
   color: white;

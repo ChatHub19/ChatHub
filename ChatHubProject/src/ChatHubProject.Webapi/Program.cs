@@ -113,6 +113,10 @@ app.MapHub<MessageHub>("/messageHub", options =>
 {
     options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets;
 });
+app.MapHub<VideoHub>("/videoHub", options =>
+{
+    options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets;
+});
 // Wichtig für das clientseitige Routing, damit wir direkt an eine URL in der Client App steuern können.
 app.MapFallbackToFile("index.html");
 app.Run();

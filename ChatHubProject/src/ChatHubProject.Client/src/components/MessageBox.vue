@@ -1,5 +1,6 @@
 <script setup>
-import signalRService from '../services/SignalRService.js';
+import chatService from '../services/ChatService.js';
+import videoService from '../services/VideoService.js';
 </script>
 
 <template>
@@ -22,15 +23,15 @@ import signalRService from '../services/SignalRService.js';
 export default {
   async mounted() {
     try { 
-      signalRService.sendJoinedMessageToAll();
-      signalRService.subscribeEvent("ReceiveMessage", this.onMessageReceived); 
-      signalRService.subscribeEvent("ReceiveJoinedMessage", this.onMessageReceived); 
+      chatService.sendJoinedMessageToAll();
+      chatService.subscribeEvent("ReceiveMessage", this.onMessageReceived); 
+      chatService.subscribeEvent("ReceiveJoinedMessage", this.onMessageReceived); 
     } 
     catch (e) { console.log(e); }    
   },
   async unmounted() {
-    signalRService.unsubscribeEvent("ReceiveMessage", this.onMessageReceived);
-    signalRService.unsubscribeEvent("ReceiveJoinedMessage", this.onMessageReceived);
+    chatService.unsubscribeEvent("ReceiveMessage", this.onMessageReceived);
+    chatService.unsubscribeEvent("ReceiveJoinedMessage", this.onMessageReceived);
   }, 
   data() {
     return {
@@ -42,7 +43,7 @@ export default {
       if(displayname === undefined) { displayname = "System"; }
       if(time === undefined) { time = new Date().toLocaleDateString(); }
       this.messages.push({text, displayname, time}); 
-    }
+    },
   }
 }
 </script>
@@ -52,6 +53,12 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+h3 {
+  color: white;
+}
+#webcam, #remote {
+  transform: scaleX(-1);
 }
 .flex {
   display: flex;
@@ -83,5 +90,10 @@ export default {
   float: right;
   font-size: 12px;
   color: white;
+}
+@media screen and (max-width: 769px) { 
+  .message-box {
+    height: 85.3vh;
+  }
 }
 </style>
