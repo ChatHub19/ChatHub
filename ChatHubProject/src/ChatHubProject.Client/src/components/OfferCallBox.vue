@@ -16,7 +16,7 @@
 <script>
 export default {
   async mounted() {
-    await this.sendVideoCallOffer();
+    // await this.sendVideoCallOffer();
   },
   methods: {
     async sendVideoCallOffer() {   

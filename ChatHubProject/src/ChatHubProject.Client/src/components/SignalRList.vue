@@ -1,6 +1,5 @@
 <script setup>
 import chatService from '../services/ChatService.js';
-import axios from 'axios';
 </script>
 
 <template>
