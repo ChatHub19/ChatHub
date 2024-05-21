@@ -61,11 +61,7 @@ namespace ChatHubProject.Webapi.Controllers
             if (guid != messageDto.Guid) { return BadRequest(); }
             var message = _db.Messages.FirstOrDefault(a => a.Guid == guid);
             if (message is null) { return NotFound(); }
-            _mapper.Map(messageDto, message,
-                opt => opt.AfterMap((Dto, entity) =>
-                {
-                    entity.User = _db.Users.First(a => a.Guid == messageDto.UserGuid);
-                }));
+            message.Text = messageDto.Text;
             try { _db.SaveChanges(); }
             catch (DbUpdateException) { return BadRequest(); } 
             return NoContent();
