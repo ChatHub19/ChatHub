@@ -1,6 +1,5 @@
 <script setup>
 import chatService from '../services/ChatService.js';
-import videoService from '../services/VideoService.js';
 import axios from "axios";
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
@@ -15,7 +14,6 @@ import 'vue3-toastify/dist/index.css';
             <p class="displayname"> {{ message.displayname }} </p>
             <p class="time"> {{ message.time }} </p>
           </div>
-        
           <div class="flex">
             <input type="checkbox" :name="'editbox' + index" :id="'editbox' + index">
             <p>{{ message.text }}</p>
@@ -23,16 +21,6 @@ import 'vue3-toastify/dist/index.css';
             <button class="edit" :id="'edit' + index" @click="showInput(index)">edit</button>
             <button :id="'delete' + index" @click=deleteMessage(message)>delete</button>
           </div>
-          
-        
-          <div class="flex">
-            <input type="checkbox" :name="'editbox' + index" :id="'editbox' + index">
-            <p>{{ message.text }}</p>
-            <input type="text" @keyup.enter=editMessage(message,index) :id="'editmessage' + index" v-model="editmessage">  
-            <button class="edit" :id="'edit' + index" @click="showInput(index)">edit</button>
-            <button :id="'delete' + index" @click=deleteMessage(message)>delete</button>
-          </div>
-          
         </div>
       </div>
     </div>
@@ -57,16 +45,10 @@ export default {
     return {
       messages: [],
       editmessage: ""
-      editmessage: ""
+      
     }
   }, 
-  computed: {
-    guid() {
-      return this.$store.state.userdata.userGuid;
-    },
-
-  },
-  }, 
+   
   computed: {
     guid() {
       return this.$store.state.userdata.userGuid;
@@ -80,7 +62,7 @@ export default {
       var messagedata = (await axios.get("message")).data
       this.messages=messagedata 
     },
-     showInput(index){
+    showInput(index){
       document.getElementById(`editbox${index}`).checked = !document.getElementById(`editbox${index}`).checked;
     },
     async editMessage(message,index){
@@ -101,38 +83,9 @@ export default {
       var messagedata = (await axios.get("message")).data
       this.messages=messagedata 
     },
-
-      var messagedata = (await axios.get("message")).data
-      this.messages=messagedata 
-    },
-     showInput(index){
-      document.getElementById(`editbox${index}`).checked = !document.getElementById(`editbox${index}`).checked;
-    },
-    async editMessage(message,index){
-      message.text=this.editmessage
-      try {await axios.put(`/message/${message.guid}`, message) }
-      catch(e) { toast.error(e.response.data) }
-      var messagedata = (await axios.get("message")).data
-      this.messages=messagedata 
-      document.getElementById(`editbox${index}`).checked = false
-      this.editmessage=""
-
-    },
-    async deleteMessage(message) {
-      try { 
-        await axios.delete(`/message/${message.guid}`) 
-      }
-      catch(e) { toast  .error(e.response.data) }
-      var messagedata = (await axios.get("message")).data
-      this.messages=messagedata 
-    },
-
   }
 }
 </script> 
-
-</script> 
-
 
 <style scoped>
 * {
@@ -184,18 +137,17 @@ h3 {
 }
 button
 {
-    background: rgba(61, 62, 63, 0.681);
-    color: white;
-    border-radius: 20px;
-    padding: 5px;
+  background: rgba(61, 62, 63, 0.681);
+  color: white;
+  border-radius: 20px;
+  padding: 5px;
 }
 .edit{
  margin-left: auto;
 }
 input{
-background: transparent;
-color: white;
-
+  background: transparent;
+  color: white;
 }
 #editmessage,input{
   display: none;
@@ -208,18 +160,17 @@ input[type="checkbox"]:checked ~ input {
 }
 button
 {
-    background: rgba(61, 62, 63, 0.681);
-    color: white;
-    border-radius: 20px;
-    padding: 5px;
+  background: rgba(61, 62, 63, 0.681);
+  color: white;
+  border-radius: 20px;
+  padding: 5px;
 }
 .edit{
  margin-left: auto;
 }
 input{
-background: transparent;
-color: white;
-
+  background: transparent;
+  color: white;
 }
 #editmessage,input{
   display: none;
