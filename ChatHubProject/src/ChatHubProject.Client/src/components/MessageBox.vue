@@ -15,7 +15,6 @@ import 'vue3-toastify/dist/index.css';
             <p class="displayname"> {{ message.displayname }} </p>
             <p class="time"> {{ message.time }} </p>
           </div>
-        
           <div class="flex">
             <input type="checkbox" :name="'editbox' + index" :id="'editbox' + index">
             <p>{{ message.text }}</p>
@@ -23,16 +22,6 @@ import 'vue3-toastify/dist/index.css';
             <button class="edit" :id="'edit' + index" @click="showInput(index)">edit</button>
             <button :id="'delete' + index" @click=deleteMessage(message)>delete</button>
           </div>
-          
-        
-          <div class="flex">
-            <input type="checkbox" :name="'editbox' + index" :id="'editbox' + index">
-            <p>{{ message.text }}</p>
-            <input type="text" @keyup.enter=editMessage(message,index) :id="'editmessage' + index" v-model="editmessage">  
-            <button class="edit" :id="'edit' + index" @click="showInput(index)">edit</button>
-            <button :id="'delete' + index" @click=deleteMessage(message)>delete</button>
-          </div>
-          
         </div>
       </div>
     </div>
@@ -57,16 +46,10 @@ export default {
     return {
       messages: [],
       editmessage: ""
-      editmessage: ""
+      
     }
   }, 
-  computed: {
-    guid() {
-      return this.$store.state.userdata.userGuid;
-    },
-
-  },
-  }, 
+   
   computed: {
     guid() {
       return this.$store.state.userdata.userGuid;
@@ -101,10 +84,7 @@ export default {
       var messagedata = (await axios.get("message")).data
       this.messages=messagedata 
     },
-
-      var messagedata = (await axios.get("message")).data
-      this.messages=messagedata 
-    },
+  
      showInput(index){
       document.getElementById(`editbox${index}`).checked = !document.getElementById(`editbox${index}`).checked;
     },
@@ -126,13 +106,9 @@ export default {
       var messagedata = (await axios.get("message")).data
       this.messages=messagedata 
     },
-
   }
 }
 </script> 
-
-</script> 
-
 
 <style scoped>
 * {

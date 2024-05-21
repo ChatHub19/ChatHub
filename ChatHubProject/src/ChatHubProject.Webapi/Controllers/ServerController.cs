@@ -1,6 +1,4 @@
 using AutoMapper;
-using Castle.Core.Configuration;
-using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using ChatHubProject.Application.Model;
 using ChatHubProject.Application.Commands;
@@ -92,7 +90,7 @@ public class ServerController : ControllerBase
         await _db.Servers.AddAsync(server);
         try { await _db.SaveChangesAsync(); }
         catch (DbUpdateException) { return BadRequest(); }
-        return Ok(new { server.Guid, server.Name, serverCmd.UserGuid});
+        return Ok(new { server.Guid, server.Name, serverCmd.UserGuid });
     }
 
     [HttpDelete("delete_server")]
