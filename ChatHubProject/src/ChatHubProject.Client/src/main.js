@@ -12,10 +12,11 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   faArrowLeftLong,
   faArrowRightLong,
+  faCaretLeft,
   faGear,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-library.add(faArrowLeftLong, faArrowRightLong, faGear, faPlus);
+library.add(faArrowLeftLong, faArrowRightLong, faGear, faPlus,faCaretLeft);
 
 axios.defaults.baseURL =
   process.env.NODE_ENV == "production" ? "/api" : "https://localhost:7081/api";

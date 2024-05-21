@@ -4,7 +4,11 @@ import signalRService from '../services/SignalRService.js';
 
 <template>
     <div class="wrapper">
-        <button @click="editMessage()">edit</button>
+        
+        <input 
+          type="text" 
+        >
+        
     </div>
 </template>
 
@@ -12,17 +16,22 @@ import signalRService from '../services/SignalRService.js';
 export default {
     data() {
     return {
-      messages: [],
+      message: "",
     }
   }, 
+  computed: {
+    guid() {
+      return this.$store.state.userdata.userGuid;
+    },
+  },
+
   methods: {
-    async onMessageReceived(text, displayname, time) {
-      if(displayname === undefined) { displayname = "System"; }
-      if(time === undefined) { time = new Date().toLocaleDateString(); }
-      this.messages.push({text, displayname, time}); 
+    async editMessage() {
+     try {await axios.put(`/message/${this.guid}`, this.accountModel) }
+      catch(e) { toast.error(e.response.data) } }
     }
   }
-}
+
 </script>
 
 <style>
@@ -33,4 +42,6 @@ button
     color: white;
     border-radius: 20px;
 }
+
+
 </style>

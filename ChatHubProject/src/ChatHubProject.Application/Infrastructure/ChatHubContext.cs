@@ -93,18 +93,7 @@ namespace ChatHubProject.Application.Infrastructure
             await Users.AddRangeAsync(users);
             await SaveChangesAsync();
 
-            var message = new Faker<Message>("en").CustomInstantiator(f =>
-            {
-                return new Message(
-                    text: f.Lorem.Word(),
-                    user: f.Random.ListItem(users),
-                    time: DateTime.Now)
-                { Guid = f.Random.Guid() };
-            })
-            .Generate(10)
-            .ToList();
-            await Messages.AddRangeAsync(message);
-            await SaveChangesAsync();
+          
         }
 
         public async Task CreateDatabase(bool isDevelopment)
