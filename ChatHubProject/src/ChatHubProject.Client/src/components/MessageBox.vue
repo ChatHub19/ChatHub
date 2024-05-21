@@ -24,6 +24,15 @@ import 'vue3-toastify/dist/index.css';
             <button :id="'delete' + index" @click=deleteMessage(message)>delete</button>
           </div>
           
+        
+          <div class="flex">
+            <input type="checkbox" :name="'editbox' + index" :id="'editbox' + index">
+            <p>{{ message.text }}</p>
+            <input type="text" @keyup.enter=editMessage(message,index) :id="'editmessage' + index" v-model="editmessage">  
+            <button class="edit" :id="'edit' + index" @click="showInput(index)">edit</button>
+            <button :id="'delete' + index" @click=deleteMessage(message)>delete</button>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -48,7 +57,15 @@ export default {
     return {
       messages: [],
       editmessage: ""
+      editmessage: ""
     }
+  }, 
+  computed: {
+    guid() {
+      return this.$store.state.userdata.userGuid;
+    },
+
+  },
   }, 
   computed: {
     guid() {
@@ -85,8 +102,35 @@ export default {
       this.messages=messagedata 
     },
 
+      var messagedata = (await axios.get("message")).data
+      this.messages=messagedata 
+    },
+     showInput(index){
+      document.getElementById(`editbox${index}`).checked = !document.getElementById(`editbox${index}`).checked;
+    },
+    async editMessage(message,index){
+      message.text=this.editmessage
+      try {await axios.put(`/message/${message.guid}`, message) }
+      catch(e) { toast.error(e.response.data) }
+      var messagedata = (await axios.get("message")).data
+      this.messages=messagedata 
+      document.getElementById(`editbox${index}`).checked = false
+      this.editmessage=""
+
+    },
+    async deleteMessage(message) {
+      try { 
+        await axios.delete(`/message/${message.guid}`) 
+      }
+      catch(e) { toast  .error(e.response.data) }
+      var messagedata = (await axios.get("message")).data
+      this.messages=messagedata 
+    },
+
   }
 }
+</script> 
+
 </script> 
 
 

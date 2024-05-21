@@ -1,4 +1,6 @@
 using AutoMapper;
+using Castle.Core.Configuration;
+using ChatHubProject.Application.Dto;
 using ChatHubProject.Application.Infrastructure;
 using ChatHubProject.Application.Model;
 using ChatHubProject.Application.Commands;
