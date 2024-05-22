@@ -1,13 +1,13 @@
 <script setup>
 import axios from "axios";
-import signalRService from '../services/SignalRService.js';
+import chatService from '../services/ChatService.js';
 import ProfileAvatar from "vue-profile-avatar";
 </script>
 
 <template>
   <div class="wrapper">
     <div class="avatar">
-      <ProfileAvatar v-if="authenticated" :username="displayname" size="m" colorType="pastel"/> 
+      <ProfileAvatar v-if="authenticated" :username="displayname" size="m" colorType="pastel" id="profileavatar"/> 
       <div id="userinfo">
         <span> {{ displayname }} </span>
         <span> {{ status }} </span>
@@ -67,7 +67,7 @@ export default {
       this.accountModel.displayname = (await axios.get(`/user/${this.guid}`)).data.displayname
     },
     async getOnlineStatus() {
-      if(signalRService.connected)
+      if(chatService.connected)
         this.accountModel.status = "Online"
       else
         this.accountModel.status = "Offline"
@@ -127,5 +127,19 @@ span {
   font-weight: bold;
   margin-right: 10px;
   color: white;
+}
+@media screen and (max-width: 769px) {
+  .avatar {
+    width: 100%;
+    padding: 11.5px;
+    display: block;
+  }
+  .option {
+    width: 2rem;
+    height: 2rem;
+  }
+  #userinfo, #profileavatar {
+    display: none;
+  }
 }
 </style>

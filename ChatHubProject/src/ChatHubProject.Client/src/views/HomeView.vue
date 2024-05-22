@@ -1,18 +1,21 @@
 <script setup>
 import LoaderComponent from "../components/LoaderComponent.vue";
 import ServerComponent from "../components/ServerComponent.vue";
-import SignalRUserList from "../components/SignalRUserList.vue";
+import SignalRList from "../components/SignalRList.vue";
 import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
-import signalRService from "../services/SignalRService.js";
+import chatService from "../services/ChatService.js";
+import videoService from "../services/VideoService.js";
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
   <div class="wrapper" v-if="connected">
     <div class="flex">
       <ServerComponent id="server" />
-      <SignalRUserList id="userlist" />
+      <SignalRList id="userlist"/>
       <MessageBox id="messagebox" />
     </div>
     <div class="flex">
@@ -28,9 +31,12 @@ import signalRService from "../services/SignalRService.js";
 <script>
 export default {
   async mounted() {
-    signalRService.configureConnection();
-    await signalRService.connect();
-    this.connected = signalRService.connected;
+    toast.success("Success")
+    chatService.configureConnection();
+    await chatService.connect();
+    videoService.configureConnection();
+    await videoService.connect();
+    this.connected = chatService.connected, videoService.connected;
   },
   data() {
     return {
@@ -53,9 +59,23 @@ export default {
   display: flex;
   align-items: center;
 }
-#messageinput,
-#messagebox {
+.video {
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  right: 10px; 
+  top: 50%;
+  transform: translateY(-50%);
+}
+#messageinput, #messagebox {
   flex-grow: 1;
   overflow: hidden;
+  margin-right: 10px;
+}
+@media screen and (max-width: 769px) {
+  #userlist {
+    width: 0;
+    height: 0;
+  }
 }
 </style>
