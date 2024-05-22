@@ -5,6 +5,8 @@ import SignalRList from "../components/SignalRList.vue";
 import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
+import signalRService from "../services/SignalRService.js";
+import ChannelComponent from "../components/ChannelComponent.vue";
 import chatService from "../services/ChatService.js";
 </script>
 
@@ -12,6 +14,8 @@ import chatService from "../services/ChatService.js";
   <div class="wrapper" v-if="connected">
     <div class="flex">
       <ServerComponent id="server" />
+      <ChannelComponent id="channel" />
+      <!-- <SignalRUserList id="userlist" /> -->
       <SignalRList id="userlist" />
       <MessageBox id="messagebox" />
     </div>
