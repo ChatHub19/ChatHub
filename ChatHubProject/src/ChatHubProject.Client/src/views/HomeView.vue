@@ -67,18 +67,12 @@ export default {
   top: 50%;
   transform: translateY(-50%);
 }
-#navmenu {
-  display: none;
-}
 #messageinput, #messagebox {
   flex-grow: 1;
   overflow: hidden;
   margin-right: 10px;
 }
 @media screen and (max-width: 769px) {
-  #navmenu {
-    display: flex;
-  }
   #userlist {
     width: 0;
     height: 0;

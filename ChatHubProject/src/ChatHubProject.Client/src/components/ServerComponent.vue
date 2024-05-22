@@ -144,6 +144,7 @@ export default {
                     },
                 })
             ).data;
+            console.log(this.servers);
             this.servers = (await axios.get('server/all_servers')).data;
         },
         setHoverEffect(value) {
@@ -190,6 +191,7 @@ export default {
             });
             this.getAllServers();
             this.hideContextMenu();
+            toast.info('Server removed!');
         },
         closeServer() {
             this.selectedFile = null;
@@ -241,6 +243,7 @@ export default {
             await this.getAllServers();
             this.isModalOpen = false;
             this.editMode = false;
+            toast.info('Server updated!');
         },
 
         showServerTooltip(serverName) {
@@ -455,7 +458,8 @@ export default {
 
 .modal-content {
     position: absolute;
-    width: 80vw;
+    width: 35%;
+    display: flex;
     font-family: 'Nunito Sans';
     color: #000;
     background: #fff;
@@ -545,33 +549,5 @@ export default {
     width: 12.5%;
     font-size: 17px;
     font-family: 'Nunito Sans';
-}
-.wrapper {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-/* For Chrome, Safari and Opera */
-.wrapper::-webkit-scrollbar {
-  display: none;
-}
-/* For Firefox */
-.wrapper {
-  scrollbar-width: none;
-}
-/* For IE and Edge */
-.wrapper {
-  -ms-overflow-style: none;
-}
-@media screen and (max-width: 769px) {
-    .wrapper {
-        background: #302c34;
-    }
-    .sidebar {
-        background: #302c34;
-        height: 85.3vh;
-    }
-    .main-icon {
-        margin-top: 80px;
-    }
 }
 </style>    
