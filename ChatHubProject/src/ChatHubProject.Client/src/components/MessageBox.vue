@@ -93,6 +93,7 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
+
 h3 {
   color: white;
 }
@@ -130,55 +131,58 @@ h3 {
   font-size: 12px;
   color: white;
 }
+button
+{
+  background: rgba(61, 62, 63, 0.681);
+  color: white;
+  border-radius: 20px;
+  padding: 5px;
+}
+.edit{
+  margin-left: auto;
+}
+input{
+  background: transparent;
+  color: white;
+}
+#editmessage,input{
+  display: none;
+}
+input[type="checkbox"]:checked ~ p {
+  display: none;
+}
+input[type="checkbox"]:checked ~ input {
+  display: block;
+}
+button {
+  background: rgba(61, 62, 63, 0.681);
+  color: white;
+  border-radius: 20px;
+  padding: 5px;
+}
+.edit{
+ margin-left: auto;
+}
+input{
+  background: transparent;
+  color: white;
+}
+#editmessage,input{
+  display: none;
+}
+input[type="checkbox"]:checked ~ p {
+  display: none;
+}
+input[type="checkbox"]:checked ~ input {
+  display: block;
+}
+p{
+  word-wrap: break-word;
+  max-width: 65vw;
+}
 @media screen and (max-width: 769px) { 
   .message-box {
     height: 85.3vh;
   }
-}
-button
-{
-  background: rgba(61, 62, 63, 0.681);
-  color: white;
-  border-radius: 20px;
-  padding: 5px;
-}
-.edit{
- margin-left: auto;
-}
-input{
-  background: transparent;
-  color: white;
-}
-#editmessage,input{
-  display: none;
-}
-input[type="checkbox"]:checked ~ p {
-  display: none;
-}
-input[type="checkbox"]:checked ~ input {
-  display: block;
-}
-button
-{
-  background: rgba(61, 62, 63, 0.681);
-  color: white;
-  border-radius: 20px;
-  padding: 5px;
-}
-.edit{
- margin-left: auto;
-}
-input{
-  background: transparent;
-  color: white;
-}
-#editmessage,input{
-  display: none;
-}
-input[type="checkbox"]:checked ~ p {
-  display: none;
-}
-input[type="checkbox"]:checked ~ input {
-  display: block;
 }
 </style>

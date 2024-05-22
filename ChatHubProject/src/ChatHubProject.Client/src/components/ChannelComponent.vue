@@ -9,8 +9,8 @@
 <style scoped>
     .wrapper {
         border-right: 0.1rem solid #fff;
-        width: 20vh;
-        height: 90vh;
+        width: 44.5vh;
+        height: 89.1vh;
         color: white;
     }
     .channels {
