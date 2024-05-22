@@ -4,6 +4,13 @@ import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
+const truncateFileName = (filename, length = 10) => {
+    if (filename.length <= length) return filename;
+    const extIndex = filename.lastIndexOf('.');
+    const extension = filename.substring(extIndex);
+    const name = filename.substring(0, length);
+    return `${name}...${extension}`;
+};
 
 const Modal = {
     props: {
@@ -21,7 +28,7 @@ const Modal = {
             closeServer();
         };
 
-        return { serverName, closeServer, saveServer };
+        return { serverName, closeServer, saveServer, truncateFileName };
     },
 };
 </script>
@@ -100,7 +107,7 @@ const Modal = {
                         Upload Image
                     </button>
                     <span v-if="uploadedFileName" id="successUploadProfile">{{
-                        uploadedFileName
+                        truncateFileName(uploadedFileName)
                     }}</span>
                 </div>
 
@@ -192,6 +199,7 @@ export default {
             this.getAllServers();
             this.hideContextMenu();
             toast.info('Server removed!');
+            this.$router.push(`/`);
         },
         closeServer() {
             this.selectedFile = null;
