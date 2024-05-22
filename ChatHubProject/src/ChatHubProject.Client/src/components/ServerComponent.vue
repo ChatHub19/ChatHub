@@ -191,6 +191,7 @@ export default {
             });
             this.getAllServers();
             this.hideContextMenu();
+            toast.info('Server removed!');
         },
         closeServer() {
             this.selectedFile = null;
@@ -242,6 +243,7 @@ export default {
             await this.getAllServers();
             this.isModalOpen = false;
             this.editMode = false;
+            toast.info('Server updated!');
         },
 
         showServerTooltip(serverName) {
@@ -456,7 +458,8 @@ export default {
 
 .modal-content {
     position: absolute;
-    width: 35rem;
+    width: 35%;
+    display: flex;
     font-family: 'Nunito Sans';
     color: #000;
     background: #fff;

@@ -6,13 +6,15 @@ import UserProfile from "../components/UserProfile.vue";
 import MessageBox from "../components/MessageBox.vue";
 import MessageInput from "../components/MessageInput.vue";
 import signalRService from "../services/SignalRService.js";
+import ChannelComponent from "../components/ChannelComponent.vue";
 </script>
 
 <template>
   <div class="wrapper" v-if="connected">
     <div class="flex">
       <ServerComponent id="server" />
-      <SignalRUserList id="userlist" />
+      <ChannelComponent id="channel" />
+      <!-- <SignalRUserList id="userlist" /> -->
       <MessageBox id="messagebox" />
     </div>
     <div class="flex">
