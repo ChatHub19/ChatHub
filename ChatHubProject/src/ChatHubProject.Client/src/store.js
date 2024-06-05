@@ -13,6 +13,7 @@ export default createStore({
         state.userdata = null;
         return;
       }
+      console.log(userdata.role)
       state.userdata = userdata;
       state.isLoggedIn = true;
     },
