@@ -52,7 +52,7 @@ export default {
     selectUser(key, value) {
       this.$router.push(`/chatroom/${key}`);
       // alert(value[0]);
-    }
+    },
   }
 }
 </script>
@@ -83,19 +83,18 @@ label, li {
   padding: 5px;
 }
 ul, .menu-btn {
+  display: flex;
+  position: relative;
   list-style-type: none;
 }
 .displayname {
   font-weight: normal;
+  margin-right: 9vw;
 }
 .menu-btn, #active {
   display: none;
 }
 @media screen and (max-width: 769px) {
-  /* .container {
-    width: 0;
-    padding: 0;
-  } */
   .listwrapper {
     position: fixed;
     top: 0;

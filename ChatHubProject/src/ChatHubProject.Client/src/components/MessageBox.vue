@@ -66,20 +66,19 @@ export default {
       document.getElementById(`editbox${index}`).checked = !document.getElementById(`editbox${index}`).checked;
     },
     async editMessage(message,index){
-      message.text=this.editmessage
+      message.text = this.editmessage
       try {await axios.put(`/message/${message.guid}`, message) }
       catch(e) { toast.error(e.response.data) }
       var messagedata = (await axios.get("message")).data
-      this.messages=messagedata 
+      this.messages = messagedata 
       document.getElementById(`editbox${index}`).checked = false
-      this.editmessage=""
-
+      this.editmessage = ""
     },
     async deleteMessage(message) {
       try { 
         await axios.delete(`/message/${message.guid}`) 
       }
-      catch(e) { toast  .error(e.response.data) }
+      catch(e) { toast.error(e.response.data) }
       var messagedata = (await axios.get("message")).data
       this.messages=messagedata 
     },

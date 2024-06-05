@@ -84,6 +84,7 @@ export default {
       try {await axios.put(`/user/displayname/${this.guid}`, this.accountModel) }
       catch(e) { toast.error(e.response.data) }
       this.$refs.displaynamefield.blur()
+      toast.success("Success")
     },
     async getEmail() {
       this.accountModel.email = (await axios.get(`/user/${this.guid}`)).data.email 
@@ -92,11 +93,13 @@ export default {
       try { await axios.put(`/user/email/${this.guid}`, this.accountModel) }
       catch(e) { toast  .error(e.response.data.errors.Email[0]) }
       this.$refs.emailfield.blur()
+      toast.success("Success")
     },
     async deleteAccount() {
       try { 
         await axios.delete(`/user/${this.guid}`) 
         this.$router.push("/login")
+        toast.success("Success")
       }
       catch(e) { toast  .error(e.response.data) }
     },
