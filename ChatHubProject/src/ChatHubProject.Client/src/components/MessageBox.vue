@@ -18,8 +18,8 @@ import 'vue3-toastify/dist/index.css';
             <input type="checkbox" :name="'editbox' + index" :id="'editbox' + index">
             <p>{{ message.text }}</p>
             <input type="text" @keyup.enter=editMessage(message,index) :id="'editmessage' + index" v-model="editmessage">  
-            <button class="edit" :id="'edit' + index" @click="showInput(index)">edit</button>
-            <button :id="'delete' + index" @click=deleteMessage(message)>delete</button>
+            <button class="edit" :id="'edit' + index" @click="showInput(index)" v-if="message.userGuid == guid || role == 'Administration'">edit</button>
+            <button :id="'delete' + index" @click=deleteMessage(message) v-if="message.userGuid == guid || role == 'Administration'">delete</button>
           </div>
         </div>
       </div>
