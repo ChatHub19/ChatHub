@@ -18,31 +18,6 @@ The ChatHub project is a web application based on Discord with already known fea
 | Richard *Liu*, 4CHIF        | liu22291@spengergasse.at | tba    |
 | Ömer *Toprak*, 4CHIF        | top22166@spengergasse.at | tba    |
 
-## Info 4 Team members
-1. Add *appsettings.Development.json* to ChatHubProject.Webapi
-```
-{
-  "ConnectionStrings": {
-    "Default": "Server=127.0.0.1,11433;Initial Catalog=ChatHubDb;User Id=sa;Password=SqlServer2019;TrustServerCertificate=true"
-  },
-  "Secret": "JEKEXCOywg+FqXOSDnmOk/GixQo+xi16hQjehDF46vE4DxgHdbsiR7JpXELO831Z6n9T32mgqc4W4S2sjtNESeHNp4KyYMPcclsyhDuRNxXX4RiOBnrHrc5TTuYQSqNJfUW691i2eu7KvvWpn8JftfHU3NjH+TccklFjPBy7k28=",
-  "Searchuser": "",
-  "Searchpass": "",
-  "LocalAdmins": "",
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning",
-      "Microsoft.EntityFrameworkCore.Database.Command": "Warning"
-    }
-  },
-  "AllowedHosts": "*"
-}
-```
-2. Add Container with this:
-```
-startServer.cmd
-```
 ## Synchronize the repository to a folder
 Run the following command to download the repository:
 ```
