@@ -6,8 +6,8 @@ Started on 7. September 2023
 The ChatHub project is a web application based on Discord with already known features.
 
 ## Features
-* Chatting with friends in private or in groups with Accounts / Admin
-* Call friends
+* Chatting with other
+* Call stranger
 * More features are tbd
 
 ## Team members
